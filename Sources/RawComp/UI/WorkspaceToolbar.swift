@@ -8,26 +8,32 @@ struct WorkspaceToolbar: View {
             Button(action: {
                 store.openImages()
             }) {
-                toolbarButtonLabel("Open", systemName: "folder")
+                toolbarStandaloneIcon("folder")
             }
+            .help("Open images")
             .keyboardShortcut("o", modifiers: .command)
             .buttonStyle(.plain)
 
             Menu {
                 ForEach(ComparisonLayout.allCases) { layout in
-                    Button(layout.title) {
+                    Button {
                         store.layout = layout
+                    } label: {
+                        Label {
+                            EmptyView()
+                        } icon: {
+                            Image(systemName: layout.menuIconSystemName)
+                        }
                     }
                 }
             } label: {
                 HStack(spacing: 8) {
-                    Text("Layout")
-                    Text(store.layout.title)
-                        .fontWeight(.medium)
+                    Image(systemName: store.layout.menuIconSystemName)
+                        .frame(width: 16, height: 16)
                     Image(systemName: "chevron.up.chevron.down")
                         .font(.system(size: 11, weight: .semibold))
                 }
-                .frame(width: 160, height: toolbarHeight)
+                .frame(width: 72, height: toolbarHeight)
                 .toolbarButtonSurface()
             }
             .menuStyle(.button)
@@ -58,6 +64,14 @@ struct WorkspaceToolbar: View {
             .help(store.showExifOverlay ? "Hide EXIF overlay" : "Show EXIF overlay")
             .buttonStyle(.plain)
 
+            Button(action: {
+                store.showTopInfoBar.toggle()
+            }) {
+                toolbarStandaloneIcon("rectangle.tophalf.inset.filled", isActive: store.showTopInfoBar)
+            }
+            .help(store.showTopInfoBar ? "Hide top info bar" : "Show top info bar")
+            .buttonStyle(.plain)
+
             Divider()
                 .frame(height: 18)
 
@@ -77,13 +91,17 @@ struct WorkspaceToolbar: View {
 
             toolbarGroup {
                 Button(action: store.fitToWindow) {
-                    toolbarText("Fit")
+                    toolbarIcon("arrow.up.left.and.arrow.down.right")
                 }
+                .help("Fit to window")
                 .buttonStyle(.plain)
 
                 Button(action: store.actualPixels) {
-                    toolbarText("100%", fontSize: 11)
+                    toolbarCustomIcon {
+                        ActualPixelsGlyph()
+                    }
                 }
+                .help("Actual pixels")
                 .buttonStyle(.plain)
             }
 
@@ -185,15 +203,38 @@ struct WorkspaceToolbar: View {
             .contentShape(Rectangle())
     }
 
-    private func toolbarText(_ title: String, fontSize: CGFloat = 12) -> some View {
-        Text(title)
-            .font(.system(size: fontSize, weight: .medium))
-            .lineLimit(1)
-            .minimumScaleFactor(0.6)
+    private func toolbarCustomIcon<Content: View>(@ViewBuilder content: () -> Content) -> some View {
+        content()
+            .frame(width: 18, height: 18)
             .frame(width: 44, height: toolbarHeight)
             .contentShape(Rectangle())
     }
 
+}
+
+private struct ActualPixelsGlyph: View {
+    var body: some View {
+        GeometryReader { geometry in
+            let inset = geometry.size.width * 0.18
+            let rect = CGRect(
+                x: inset,
+                y: inset,
+                width: geometry.size.width - (inset * 2),
+                height: geometry.size.height - (inset * 2)
+            )
+
+            ZStack {
+                Path { path in
+                    path.addRect(rect)
+                }
+                .stroke(style: StrokeStyle(lineWidth: 1.5))
+
+                Circle()
+                    .fill(Color.primary)
+                    .frame(width: geometry.size.width * 0.18, height: geometry.size.height * 0.18)
+            }
+        }
+    }
 }
 
 private extension View {

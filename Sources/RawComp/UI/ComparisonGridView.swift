@@ -3,16 +3,18 @@ import SwiftUI
 struct ComparisonGridView: View {
     @ObservedObject var store: WorkspaceStore
 
+    private let paneSpacing: CGFloat = 0
+
     var body: some View {
         GeometryReader { proxy in
             ScrollView {
                 LazyVGrid(
                     columns: Array(
-                        repeating: GridItem(.flexible(minimum: 260), spacing: 12, alignment: .top),
+                        repeating: GridItem(.flexible(minimum: 260), spacing: paneSpacing, alignment: .top),
                         count: store.layout.columnCount
                     ),
                     alignment: .center,
-                    spacing: 12
+                    spacing: paneSpacing
                 ) {
                     ForEach(store.visiblePanes) { pane in
                         ImagePaneView(store: store, pane: pane)
@@ -21,7 +23,6 @@ struct ComparisonGridView: View {
                             )
                     }
                 }
-                .padding(12)
             }
             .background(Color(nsColor: .controlBackgroundColor))
         }
@@ -29,7 +30,7 @@ struct ComparisonGridView: View {
 
     private func idealPaneHeight(in size: CGSize, layout: ComparisonLayout) -> CGFloat {
         let rowCount = CGFloat((layout.paneCount + layout.columnCount - 1) / layout.columnCount)
-        let totalSpacing = max(0, rowCount - 1) * 12
-        return max(260, (size.height - totalSpacing - 24) / rowCount)
+        let totalSpacing = max(0, rowCount - 1) * paneSpacing
+        return max(260, (size.height - totalSpacing) / rowCount)
     }
 }

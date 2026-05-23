@@ -16,19 +16,6 @@ struct ContentView: View {
                         .frame(minWidth: 260, idealWidth: 300, maxWidth: 340)
                 }
             }
-            Divider()
-            HStack {
-                Text(store.statusMessage)
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-                Spacer()
-                Text(store.linkMode == .synced ? "Viewport Sync On" : "Viewport Sync Off")
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-            }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 10)
-            .background(Color(nsColor: .underPageBackgroundColor))
         }
         .background(Color(nsColor: .windowBackgroundColor))
     }
@@ -206,7 +193,17 @@ private struct AdjustmentSliderRow: View {
                     .foregroundStyle(.secondary)
             }
 
-            Slider(value: value, in: range, step: step)
+            Slider(value: steppedValue, in: range)
         }
+    }
+
+    private var steppedValue: Binding<Double> {
+        Binding(
+            get: { value.wrappedValue },
+            set: { newValue in
+                let stepped = (newValue / step).rounded() * step
+                value.wrappedValue = min(max(stepped, range.lowerBound), range.upperBound)
+            }
+        )
     }
 }

@@ -20,6 +20,7 @@ final class WorkspaceStore: ObservableObject {
     }
     @Published var linkMode: LinkMode = .synced
     @Published var highlightRect: CGRect?
+    @Published var showTopInfoBar = true
     @Published var showExifOverlay = false
     @Published var showInspector = true
     @Published var adjustments = ComparisonAdjustments() {

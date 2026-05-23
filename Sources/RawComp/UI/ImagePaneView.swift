@@ -7,38 +7,17 @@ struct ImagePaneView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            HStack(spacing: 10) {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(pane.title)
-                        .font(.headline)
-                        .lineLimit(1)
-                    Text(subtitleText)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .lineLimit(1)
-                }
-
-                Spacer()
-
-                statusBadge
-            }
-            .padding(.horizontal, 14)
-            .padding(.vertical, 12)
-
-            Divider()
-
             Group {
                 if let loadedImage = pane.loadedImage {
-                    ZStack(alignment: .bottomLeading) {
-                        ImageCanvasView(
-                            loadedImage: loadedImage,
-                            displayCGImage: pane.renderedCGImage ?? loadedImage.cgImage,
-                            viewport: pane.viewport,
-                            highlightRect: store.highlightRect,
-                            onViewportChange: { store.updateViewport(from: pane.id, viewport: $0) },
-                            onSelect: { store.selectPane(pane.id) }
-                        )
-
+                    ImageCanvasView(
+                        loadedImage: loadedImage,
+                        displayCGImage: pane.renderedCGImage ?? loadedImage.cgImage,
+                        viewport: pane.viewport,
+                        highlightRect: store.highlightRect,
+                        onViewportChange: { store.updateViewport(from: pane.id, viewport: $0) },
+                        onSelect: { store.selectPane(pane.id) }
+                    )
+                    .overlay(alignment: .bottomLeading) {
                         if store.showExifOverlay, let summary = loadedImage.metadata.basicExifSummary {
                             exifOverlay(summary)
                         }
@@ -49,17 +28,22 @@ struct ImagePaneView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color(nsColor: .black))
+            .overlay(alignment: .topLeading) {
+                if store.showTopInfoBar {
+                    topInfoOverlay
+                }
+            }
         }
         .background(Color(nsColor: .textBackgroundColor))
-        .clipShape(RoundedRectangle(cornerRadius: 8))
+        .clipShape(Rectangle())
         .overlay(
-            RoundedRectangle(cornerRadius: 8)
+            Rectangle()
                 .stroke(
                     store.isSelected(pane) ? Color.accentColor : Color.secondary.opacity(0.25),
                     lineWidth: store.isSelected(pane) ? 2 : 1
                 )
         )
-        .contentShape(RoundedRectangle(cornerRadius: 8))
+        .contentShape(Rectangle())
         .onTapGesture {
             store.selectPane(pane.id)
         }
@@ -74,24 +58,6 @@ struct ImagePaneView: View {
         }
 
         return metadata.dimensionsText
-    }
-
-    @ViewBuilder
-    private var statusBadge: some View {
-        switch pane.loadState {
-        case .empty:
-            badge("Empty", color: .secondary)
-        case .loading:
-            badge("Loading", color: .orange)
-        case .ready:
-            if pane.loadedImage?.isPreview == true {
-                badge("Preview", color: .yellow)
-            } else {
-                badge("Ready", color: .green)
-            }
-        case let .failed(message):
-            badge(message, color: .red)
-        }
     }
 
     private var emptyState: some View {
@@ -117,14 +83,32 @@ struct ImagePaneView: View {
         .background(Color(nsColor: .black))
     }
 
-    private func badge(_ text: String, color: Color) -> some View {
-        Text(text)
-            .font(.caption.weight(.semibold))
-            .foregroundStyle(color)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
-            .background(color.opacity(0.12))
-            .clipShape(Capsule())
+    private var topInfoOverlay: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(pane.title)
+                .font(.headline)
+                .foregroundStyle(.white)
+                .lineLimit(1)
+            Text(subtitleText)
+                .font(.caption)
+                .foregroundStyle(Color.white.opacity(0.78))
+                .lineLimit(1)
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 12)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            LinearGradient(
+                colors: [
+                    Color.black.opacity(0.72),
+                    Color.black.opacity(0.38),
+                    Color.black.opacity(0.0)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .shadow(color: .black.opacity(0.55), radius: 8, y: 2)
+        )
     }
 
     private func exifOverlay(_ text: String) -> some View {

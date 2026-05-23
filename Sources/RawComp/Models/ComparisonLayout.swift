@@ -26,4 +26,17 @@ enum ComparisonLayout: Int, CaseIterable, Identifiable, Sendable {
     var title: String {
         "\(rawValue) Up"
     }
+
+    var menuIconSystemName: String {
+        switch self {
+        case .two:
+            "rectangle.split.2x1"
+        case .three:
+            "rectangle.split.3x1"
+        case .four:
+            "square.grid.2x2"
+        case .six:
+            "square.grid.3x2"
+        }
+    }
 }
