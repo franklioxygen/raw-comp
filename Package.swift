@@ -13,7 +13,10 @@ let package = Package(
     ],
     targets: [
         .executableTarget(
-            name: "RawComp"
+            name: "RawComp",
+            resources: [
+                .process("Resources")
+            ]
         ),
         .testTarget(
             name: "RawCompTests",

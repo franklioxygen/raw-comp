@@ -19,8 +19,8 @@ final class WorkspaceStore: ObservableObject {
         }
     }
     @Published var linkMode: LinkMode = .synced
-    @Published var showHighlight = true
     @Published var highlightRect: CGRect?
+    @Published var showExifOverlay = false
     @Published var showInspector = true
     @Published var adjustments = ComparisonAdjustments() {
         didSet {
@@ -196,7 +196,6 @@ final class WorkspaceStore: ObservableObject {
         }
 
         highlightRect = rect
-        showHighlight = true
         statusMessage = "Captured a synchronized highlight region from \(activePane.title)."
     }
 

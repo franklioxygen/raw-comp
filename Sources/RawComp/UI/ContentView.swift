@@ -41,33 +41,47 @@ private struct InspectorView: View {
         let pane = store.activePane
         let metadata = pane?.loadedImage?.metadata
 
-        VStack(alignment: .leading, spacing: 14) {
-            adjustmentSection
+        ScrollView {
+            VStack(alignment: .leading, spacing: 10) {
+                adjustmentSection
 
-            Divider()
+                Divider()
 
-            Text("Inspector")
-                .font(.title3.weight(.semibold))
+                Text("Inspector")
+                    .font(.headline)
 
-            if let metadata {
-                inspectorRow("File", metadata.fileName)
-                inspectorRow("Type", metadata.fileType)
-                inspectorRow("Size", metadata.dimensionsText)
-                inspectorRow("Disk", metadata.fileSizeText)
-                inspectorRow("Color", metadata.colorModel ?? "Unknown")
-                inspectorRow("Profile", metadata.profileName ?? "Unknown")
-                inspectorRow("Pipeline", metadata.usesRawPipeline ? "RAW / Preview" : "Standard")
-                inspectorRow("Zoom", zoomText(for: pane?.viewport))
-                inspectorRow("Rotation", rotationText(for: pane?.viewport))
-            } else {
-                Text("Select a pane with an image to inspect file details and viewport state.")
-                    .foregroundStyle(.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
+                if let metadata {
+                    VStack(alignment: .leading, spacing: 5) {
+                        inspectorRow("File", metadata.fileName)
+                        inspectorRow("Type", metadata.fileType)
+                        inspectorRow("Size", metadata.dimensionsText)
+                        inspectorRow("Disk", metadata.fileSizeText)
+                        inspectorRow("Color", metadata.colorModel ?? "Unknown")
+                        inspectorRow("Profile", metadata.profileName ?? "Unknown")
+                        inspectorRow("Pipeline", metadata.usesRawPipeline ? "RAW / Preview" : "Standard")
+                        inspectorRow("Zoom", zoomText(for: pane?.viewport))
+                        inspectorRow("Rotation", rotationText(for: pane?.viewport))
+                    }
+
+                    if !metadata.exifFields.isEmpty {
+                        Divider()
+                        Text("EXIF")
+                            .font(.subheadline.weight(.semibold))
+                        VStack(alignment: .leading, spacing: 5) {
+                            ForEach(metadata.exifFields) { field in
+                                inspectorRow(field.label, field.value)
+                            }
+                        }
+                    }
+                } else {
+                    Text("Select a pane with an image to inspect file details and viewport state.")
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
             }
-
-            Spacer()
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding(18)
+        .padding(14)
         .background(Color(nsColor: .underPageBackgroundColor))
     }
 
@@ -130,20 +144,22 @@ private struct InspectorView: View {
                 valueFormatter: { String(format: "%.2f", $0) }
             )
 
-            Text("State: \(store.adjustments.statusText)")
-                .font(.caption)
-                .foregroundStyle(.secondary)
         }
     }
 
     private func inspectorRow(_ title: String, _ value: String) -> some View {
-        VStack(alignment: .leading, spacing: 3) {
-            Text(title.uppercased())
-                .font(.caption.weight(.semibold))
+        HStack(alignment: .firstTextBaseline, spacing: 8) {
+            Text(title)
+                .font(.caption.weight(.medium))
                 .foregroundStyle(.secondary)
+                .frame(width: 78, alignment: .leading)
+                .lineLimit(1)
+
             Text(value)
-                .font(.body)
+                .font(.caption)
+                .lineLimit(2)
                 .textSelection(.enabled)
+                .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 

@@ -2,6 +2,12 @@ import SwiftUI
 
 @main
 struct RawCompApp: App {
+    init() {
+        Task { @MainActor in
+            AppIconController.applyBundledIcon()
+        }
+    }
+
     var body: some Scene {
         WindowGroup {
             ContentView()

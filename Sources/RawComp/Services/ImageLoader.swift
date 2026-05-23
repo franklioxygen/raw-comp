@@ -140,7 +140,110 @@ actor ImageLoader {
             fileSizeBytes: fileSizeBytes ?? nil,
             colorModel: colorModel,
             profileName: profileName,
-            usesRawPipeline: rawHint
+            usesRawPipeline: rawHint,
+            exifFields: makeExifFields(from: properties)
         )
+    }
+
+    private func makeExifFields(from properties: [CFString: Any]) -> [ImageMetadataField] {
+        let exif = properties[kCGImagePropertyExifDictionary] as? [CFString: Any] ?? [:]
+        let tiff = properties[kCGImagePropertyTIFFDictionary] as? [CFString: Any] ?? [:]
+        let gps = properties[kCGImagePropertyGPSDictionary] as? [CFString: Any] ?? [:]
+
+        let candidates: [(String, String, Any?)] = [
+            ("camera_make", "Camera Make", tiff[kCGImagePropertyTIFFMake]),
+            ("camera_model", "Camera Model", tiff[kCGImagePropertyTIFFModel]),
+            ("lens_model", "Lens", exif[kCGImagePropertyExifLensModel]),
+            ("date_original", "Date Original", exif[kCGImagePropertyExifDateTimeOriginal] ?? tiff[kCGImagePropertyTIFFDateTime]),
+            ("exposure_time", "Exposure", exif[kCGImagePropertyExifExposureTime]),
+            ("f_number", "Aperture", exif[kCGImagePropertyExifFNumber]),
+            ("iso", "ISO", exif[kCGImagePropertyExifISOSpeedRatings]),
+            ("focal_length", "Focal Length", exif[kCGImagePropertyExifFocalLength]),
+            ("exposure_bias", "Exposure Bias", exif[kCGImagePropertyExifExposureBiasValue]),
+            ("metering_mode", "Metering", exif[kCGImagePropertyExifMeteringMode]),
+            ("white_balance", "White Balance", exif[kCGImagePropertyExifWhiteBalance]),
+            ("flash", "Flash", exif[kCGImagePropertyExifFlash]),
+            ("software", "Software", tiff[kCGImagePropertyTIFFSoftware]),
+            ("artist", "Artist", tiff[kCGImagePropertyTIFFArtist]),
+            ("gps_latitude", "GPS Latitude", gps[kCGImagePropertyGPSLatitude]),
+            ("gps_longitude", "GPS Longitude", gps[kCGImagePropertyGPSLongitude])
+        ]
+
+        return candidates.compactMap { id, label, value in
+            guard let text = formatMetadataValue(value, id: id), !text.isEmpty else {
+                return nil
+            }
+
+            return ImageMetadataField(id: id, label: label, value: text)
+        }
+    }
+
+    private func formatMetadataValue(_ value: Any?, id: String? = nil) -> String? {
+        switch value {
+        case let value as String:
+            value
+        case let value as NSNumber:
+            formatNumber(value, id: id)
+        case let values as [Any]:
+            values.compactMap { formatMetadataValue($0, id: id) }.joined(separator: ", ")
+        default:
+            nil
+        }
+    }
+
+    private func formatNumber(_ number: NSNumber, id: String?) -> String {
+        let value = number.doubleValue
+        switch id {
+        case "exposure_time":
+            return formatExposureTime(value)
+        case "f_number":
+            return "f/\(formatDecimal(value, maxFractionDigits: 1))"
+        case "focal_length":
+            return "\(formatDecimal(value, maxFractionDigits: 1)) mm"
+        case "exposure_bias":
+            return "\(formatSignedDecimal(value, maxFractionDigits: 2)) EV"
+        case "gps_latitude", "gps_longitude":
+            return "\(formatDecimal(value, maxFractionDigits: 6)) deg"
+        default:
+            break
+        }
+
+        if value.rounded() == value {
+            return String(Int64(value))
+        }
+
+        return formatDecimal(value, maxFractionDigits: 3)
+    }
+
+    private func formatExposureTime(_ seconds: Double) -> String {
+        guard seconds > 0 else {
+            return "0 s"
+        }
+
+        if seconds < 1 {
+            let denominator = Int((1 / seconds).rounded())
+            return "1/\(denominator) s"
+        }
+
+        return "\(formatDecimal(seconds, maxFractionDigits: 1)) s"
+    }
+
+    private func formatDecimal(_ value: Double, maxFractionDigits: Int) -> String {
+        let formatter = NumberFormatter()
+        formatter.minimumFractionDigits = 0
+        formatter.maximumFractionDigits = maxFractionDigits
+        formatter.numberStyle = .decimal
+        return formatter.string(from: NSNumber(value: value)) ?? String(format: "%.\(maxFractionDigits)f", value)
+    }
+
+    private func formatSignedDecimal(_ value: Double, maxFractionDigits: Int) -> String {
+        let formatted = formatDecimal(abs(value), maxFractionDigits: maxFractionDigits)
+        if value > 0 {
+            return "+\(formatted)"
+        }
+        if value < 0 {
+            return "-\(formatted)"
+        }
+        return formatted
     }
 }

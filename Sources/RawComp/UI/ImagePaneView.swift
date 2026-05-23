@@ -29,14 +29,20 @@ struct ImagePaneView: View {
 
             Group {
                 if let loadedImage = pane.loadedImage {
-                    ImageCanvasView(
-                        loadedImage: loadedImage,
-                        displayCGImage: pane.renderedCGImage ?? loadedImage.cgImage,
-                        viewport: pane.viewport,
-                        highlightRect: store.showHighlight ? store.highlightRect : nil,
-                        onViewportChange: { store.updateViewport(from: pane.id, viewport: $0) },
-                        onSelect: { store.selectPane(pane.id) }
-                    )
+                    ZStack(alignment: .bottomLeading) {
+                        ImageCanvasView(
+                            loadedImage: loadedImage,
+                            displayCGImage: pane.renderedCGImage ?? loadedImage.cgImage,
+                            viewport: pane.viewport,
+                            highlightRect: store.highlightRect,
+                            onViewportChange: { store.updateViewport(from: pane.id, viewport: $0) },
+                            onSelect: { store.selectPane(pane.id) }
+                        )
+
+                        if store.showExifOverlay, let summary = loadedImage.metadata.basicExifSummary {
+                            exifOverlay(summary)
+                        }
+                    }
                 } else {
                     emptyState
                 }
@@ -119,5 +125,27 @@ struct ImagePaneView: View {
             .padding(.vertical, 4)
             .background(color.opacity(0.12))
             .clipShape(Capsule())
+    }
+
+    private func exifOverlay(_ text: String) -> some View {
+        Text(text)
+            .font(.caption.monospacedDigit().weight(.semibold))
+            .foregroundStyle(.white)
+            .lineLimit(1)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(
+                LinearGradient(
+                    colors: [
+                        Color.black.opacity(0.72),
+                        Color.black.opacity(0.38),
+                        Color.black.opacity(0.0)
+                    ],
+                    startPoint: .bottom,
+                    endPoint: .top
+                )
+                .shadow(color: .black.opacity(0.55), radius: 8, y: -2)
+            )
     }
 }

@@ -2,6 +2,12 @@ import AppKit
 import CoreGraphics
 import Foundation
 
+struct ImageMetadataField: Identifiable, Sendable {
+    let id: String
+    let label: String
+    let value: String
+}
+
 struct ImageMetadata: Sendable {
     let fileName: String
     let fileType: String
@@ -11,6 +17,7 @@ struct ImageMetadata: Sendable {
     let colorModel: String?
     let profileName: String?
     let usesRawPipeline: Bool
+    let exifFields: [ImageMetadataField]
 
     var dimensionsText: String {
         "\(pixelWidth) x \(pixelHeight)"
@@ -22,6 +29,23 @@ struct ImageMetadata: Sendable {
         }
 
         return ByteCountFormatter.string(fromByteCount: fileSizeBytes, countStyle: .file)
+    }
+
+    var basicExifSummary: String? {
+        let lookup = Dictionary(uniqueKeysWithValues: exifFields.map { ($0.id, $0.value) })
+        let values = [
+            lookup["f_number"],
+            lookup["iso"].map { "ISO \($0)" },
+            lookup["exposure_time"],
+            lookup["focal_length"],
+            lookup["exposure_bias"]
+        ].compactMap { $0 }
+
+        guard !values.isEmpty else {
+            return nil
+        }
+
+        return values.joined(separator: "   ")
     }
 }
 
