@@ -52,6 +52,12 @@ struct ImageCanvasView: NSViewRepresentable {
 
     @MainActor
     final class Coordinator: NSObject {
+        private struct PendingViewportApplication {
+            let viewport: ViewportState
+            let documentSize: CGSize
+            let imageChanged: Bool
+        }
+
         var onViewportChange: (ViewportState) -> Void
         var onSelect: () -> Void
 
@@ -60,6 +66,8 @@ struct ImageCanvasView: NSViewRepresentable {
         private var observers: [NSObjectProtocol] = []
         private var isApplyingState = false
         private var lastImageURL: URL?
+        private var pendingViewportApplication: PendingViewportApplication?
+        private var viewportApplicationScheduled = false
 
         init(onViewportChange: @escaping (ViewportState) -> Void, onSelect: @escaping () -> Void) {
             self.onViewportChange = onViewportChange
@@ -138,12 +146,41 @@ struct ImageCanvasView: NSViewRepresentable {
             documentView.displayScale = viewport.zoomScale
             let documentSize = documentView.updateDocumentSize()
 
-            applyViewport(
-                viewport.clamped(),
-                to: scrollView,
+            pendingViewportApplication = PendingViewportApplication(
+                viewport: viewport.clamped(),
                 documentSize: documentSize,
                 imageChanged: imageChanged
             )
+            scheduleViewportApplication()
+        }
+
+        private func scheduleViewportApplication() {
+            guard !viewportApplicationScheduled else {
+                return
+            }
+
+            viewportApplicationScheduled = true
+            DispatchQueue.main.async { [weak self] in
+                guard let self else {
+                    return
+                }
+
+                self.viewportApplicationScheduled = false
+                guard
+                    let pending = self.pendingViewportApplication,
+                    let scrollView = self.scrollView
+                else {
+                    return
+                }
+
+                self.pendingViewportApplication = nil
+                self.applyViewport(
+                    pending.viewport,
+                    to: scrollView,
+                    documentSize: pending.documentSize,
+                    imageChanged: pending.imageChanged
+                )
+            }
         }
 
         private func applyViewport(
@@ -280,7 +317,9 @@ fileprivate final class ImageDocumentView: NSView {
         let size = normalizedTurns == 1
             ? CGSize(width: max(imageSize.height, 1), height: max(imageSize.width, 1))
             : CGSize(width: max(imageSize.width, 1), height: max(imageSize.height, 1))
-        setFrameSize(size)
+        if frame.size != size {
+            setFrameSize(size)
+        }
         needsDisplay = true
         return size
     }
