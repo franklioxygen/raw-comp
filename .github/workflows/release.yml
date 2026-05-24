@@ -57,6 +57,7 @@ jobs:
         env:
           SPARKLE_FEED_URL: https://github.com/${{ github.repository }}/releases/latest/download/appcast.xml
           SPARKLE_PUBLIC_ED_KEY: ${{ secrets.SPARKLE_PUBLIC_ED_KEY }}
+          SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
         run: ./scripts/package-app.sh
 
       - name: Package release assets
@@ -83,13 +84,8 @@ jobs:
           RELEASE_LINK: https://github.com/${{ github.repository }}
           SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
         run: |
-          if [ -z "$SPARKLE_PRIVATE_KEY" ]; then
-            echo "::warning::Skipping appcast generation because SPARKLE_PRIVATE_KEY is not configured."
-          elif ./scripts/generate-appcast.sh; then
-            echo "path=dist/appcast.xml" >> "$GITHUB_OUTPUT"
-          else
-            echo "::warning::Skipping appcast upload because generate_appcast is unavailable."
-          fi
+          ./scripts/generate-appcast.sh
+          echo "path=dist/appcast.xml" >> "$GITHUB_OUTPUT"
 
       - name: Create or update GitHub release
         env:

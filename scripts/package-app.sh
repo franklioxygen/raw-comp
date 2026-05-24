@@ -10,6 +10,7 @@ APP_VERSION_SOURCE="${APP_VERSION_SOURCE:-$ROOT_DIR/Sources/RawComp/AppVersion.s
 OUTPUT_DIR="${OUTPUT_DIR:-$ROOT_DIR/dist}"
 SPARKLE_FEED_URL="${SPARKLE_FEED_URL:-}"
 SPARKLE_PUBLIC_ED_KEY="${SPARKLE_PUBLIC_ED_KEY:-}"
+SPARKLE_PRIVATE_KEY="${SPARKLE_PRIVATE_KEY:-}"
 APP_DIR="$OUTPUT_DIR/${APP_NAME}.app"
 CONTENTS_DIR="$APP_DIR/Contents"
 MACOS_DIR="$CONTENTS_DIR/MacOS"
@@ -36,6 +37,22 @@ require_cmd() {
 extract_value() {
   local key="$1"
   perl -ne "if (/${key} = \"([^\"]+)\"/) { print \$1; exit }" "$APP_VERSION_SOURCE"
+}
+
+derive_public_ed_key() {
+  /usr/bin/env swift - "$SPARKLE_PRIVATE_KEY" <<'SWIFT'
+import CryptoKit
+import Foundation
+
+guard CommandLine.arguments.count == 2,
+      let privateKeyData = Data(base64Encoded: CommandLine.arguments[1]),
+      let privateKey = try? Curve25519.Signing.PrivateKey(rawRepresentation: privateKeyData)
+else {
+    exit(1)
+}
+
+print(privateKey.publicKey.rawRepresentation.base64EncodedString())
+SWIFT
 }
 
 write_info_plist() {
@@ -151,6 +168,13 @@ main() {
   [[ -d "$RESOURCE_BUNDLE_PATH" ]] || fail "Resource bundle not found: ${RESOURCE_BUNDLE_PATH}"
   [[ -f "$APP_VERSION_SOURCE" ]] || fail "Version source file not found: ${APP_VERSION_SOURCE}"
   [[ -f "$ICON_SOURCE" ]] || fail "App icon source not found: ${ICON_SOURCE}"
+  if [[ -n "$SPARKLE_FEED_URL" && -z "$SPARKLE_PUBLIC_ED_KEY" ]]; then
+    if [[ -n "$SPARKLE_PRIVATE_KEY" ]]; then
+      SPARKLE_PUBLIC_ED_KEY="$(derive_public_ed_key)" || fail "Could not derive SUPublicEDKey from SPARKLE_PRIVATE_KEY"
+    else
+      fail "SPARKLE_PUBLIC_ED_KEY or SPARKLE_PRIVATE_KEY is required when SPARKLE_FEED_URL is set"
+    fi
+  fi
 
   local marketing_version
   local build_number
