@@ -8,6 +8,7 @@ APPCAST_PATH="${APPCAST_PATH:-$DIST_DIR/appcast.xml}"
 DOWNLOAD_URL_PREFIX="${DOWNLOAD_URL_PREFIX:-}"
 RELEASE_LINK="${RELEASE_LINK:-}"
 SPARKLE_PRIVATE_KEY="${SPARKLE_PRIVATE_KEY:-}"
+KEY_FILE=""
 
 fail() {
   printf 'error: %s\n' "$1" >&2
@@ -31,19 +32,18 @@ main() {
   mkdir -p "$(dirname "$APPCAST_PATH")"
 
   local generate_appcast
-  local key_file
 
   generate_appcast="$(find_generate_appcast)"
   [[ -n "$generate_appcast" ]] || fail "Could not find generate_appcast. Add Sparkle tooling before generating appcast.xml."
 
-  key_file="$(mktemp)"
-  trap 'rm -f "$key_file"' EXIT
-  printf '%s' "$SPARKLE_PRIVATE_KEY" > "$key_file"
+  KEY_FILE="$(mktemp)"
+  trap 'rm -f "${KEY_FILE:-}"' EXIT
+  printf '%s' "$SPARKLE_PRIVATE_KEY" > "$KEY_FILE"
 
   curl -fsSL "$RELEASE_LINK/releases/latest/download/appcast.xml" -o "$APPCAST_PATH" 2>/dev/null || true
 
   "$generate_appcast" \
-    --ed-key-file "$key_file" \
+    --ed-key-file "$KEY_FILE" \
     -o "$APPCAST_PATH" \
     --download-url-prefix "$DOWNLOAD_URL_PREFIX/" \
     --link "$RELEASE_LINK" \
