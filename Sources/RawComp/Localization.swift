@@ -42,27 +42,7 @@ enum L10n {
     }
 
     private static var selectedLocalization: String? {
-        switch UserDefaults.standard.string(forKey: languageKey) {
-        case "english":
-            "en"
-        case "chinese":
-            "zh-Hans"
-        case "french":
-            "fr"
-        case "german":
-            "de"
-        case "italian":
-            "it"
-        case "japanese":
-            "ja"
-        case "korean":
-            "ko"
-        case "portuguese":
-            "pt"
-        case "spanish":
-            "es"
-        default:
-            nil
-        }
+        let language = AppLanguage(rawValue: UserDefaults.standard.string(forKey: languageKey) ?? "") ?? .system
+        return language.resourceLocalizationIdentifier
     }
 }

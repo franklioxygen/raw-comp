@@ -8,6 +8,9 @@ struct RawCompApp: App {
     private let updaterController: SPUStandardUpdaterController?
 
     init() {
+        let settingsController = AppSettingsController(updater: nil)
+        _settingsController = StateObject(wrappedValue: settingsController)
+
         let updaterController = SPUStandardUpdaterController(startingUpdater: false, updaterDelegate: nil, userDriverDelegate: nil)
         self.updaterController = updaterController
 
@@ -20,7 +23,7 @@ struct RawCompApp: App {
             updater = nil
         }
 
-        _settingsController = StateObject(wrappedValue: AppSettingsController(updater: updater))
+        settingsController.attachUpdater(updater)
 
         Task { @MainActor in
             AppIconController.applyBundledIcon()

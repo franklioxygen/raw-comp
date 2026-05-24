@@ -74,6 +74,19 @@ write_info_plist() {
   <string>com.rawcomp.app</string>
   <key>CFBundleInfoDictionaryVersion</key>
   <string>6.0</string>
+  <key>CFBundleLocalizations</key>
+  <array>
+    <string>en</string>
+    <string>zh-Hans</string>
+    <string>fr</string>
+    <string>de</string>
+    <string>it</string>
+    <string>ja</string>
+    <string>ko</string>
+    <string>pt-PT</string>
+    <string>pt-BR</string>
+    <string>es</string>
+  </array>
   <key>CFBundleName</key>
   <string>${APP_NAME}</string>
   <key>CFBundlePackageType</key>

@@ -95,6 +95,69 @@ enum AppLanguage: String, CaseIterable, Identifiable {
             Locale(identifier: "es")
         }
     }
+
+    var resourceLocalizationIdentifier: String? {
+        switch self {
+        case .system:
+            nil
+        case .english:
+            "en"
+        case .chinese:
+            "zh-Hans"
+        case .french:
+            "fr"
+        case .german:
+            "de"
+        case .italian:
+            "it"
+        case .japanese:
+            "ja"
+        case .korean:
+            "ko"
+        case .portuguese:
+            "pt"
+        case .spanish:
+            "es"
+        }
+    }
+
+    var bundleLanguagePreferences: [String]? {
+        switch self {
+        case .system:
+            nil
+        case .english:
+            ["en"]
+        case .chinese:
+            ["zh-Hans", "zh_CN", "zh"]
+        case .french:
+            ["fr"]
+        case .german:
+            ["de"]
+        case .italian:
+            ["it"]
+        case .japanese:
+            ["ja"]
+        case .korean:
+            ["ko"]
+        case .portuguese:
+            ["pt-PT", "pt-BR", "pt"]
+        case .spanish:
+            ["es"]
+        }
+    }
+
+    static let mainBundleLocalizations = [
+        "en",
+        "zh-Hans",
+        "fr",
+        "de",
+        "it",
+        "ja",
+        "ko",
+        "pt-PT",
+        "pt-BR",
+        "es"
+    ]
 }
 
 @MainActor
@@ -108,6 +171,7 @@ final class AppSettingsController: ObservableObject {
     @Published var language: AppLanguage {
         didSet {
             UserDefaults.standard.set(language.rawValue, forKey: Self.languageKey)
+            Self.applyBundleLanguagePreference(language)
         }
     }
 
@@ -122,6 +186,7 @@ final class AppSettingsController: ObservableObject {
     init(updater: SPUUpdater?) {
         theme = AppTheme(rawValue: UserDefaults.standard.string(forKey: Self.themeKey) ?? "") ?? .system
         language = AppLanguage(rawValue: UserDefaults.standard.string(forKey: Self.languageKey) ?? "") ?? .system
+        Self.applyBundleLanguagePreference(language)
 
         connectToUpdater(updater)
     }
@@ -146,6 +211,10 @@ final class AppSettingsController: ObservableObject {
 
     func checkForUpdates() {
         updater?.checkForUpdates()
+    }
+
+    func attachUpdater(_ updater: SPUUpdater?) {
+        connectToUpdater(updater)
     }
 
     private func connectToUpdater(_ updater: SPUUpdater?) {
@@ -174,6 +243,14 @@ final class AppSettingsController: ObservableObject {
             Task { @MainActor in
                 self?.canCheckForUpdates = updater.canCheckForUpdates
             }
+        }
+    }
+
+    private static func applyBundleLanguagePreference(_ language: AppLanguage) {
+        if let languages = language.bundleLanguagePreferences {
+            UserDefaults.standard.set(languages, forKey: "AppleLanguages")
+        } else {
+            UserDefaults.standard.removeObject(forKey: "AppleLanguages")
         }
     }
 
