@@ -4,6 +4,7 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DIST_DIR="${DIST_DIR:-$ROOT_DIR/dist}"
+APPCAST_PATH="${APPCAST_PATH:-$DIST_DIR/appcast.xml}"
 DOWNLOAD_URL_PREFIX="${DOWNLOAD_URL_PREFIX:-}"
 RELEASE_LINK="${RELEASE_LINK:-}"
 SPARKLE_PRIVATE_KEY="${SPARKLE_PRIVATE_KEY:-}"
@@ -27,6 +28,7 @@ main() {
   [[ -n "$RELEASE_LINK" ]] || fail "RELEASE_LINK is required"
   [[ -n "$SPARKLE_PRIVATE_KEY" ]] || fail "SPARKLE_PRIVATE_KEY is required"
   [[ -d "$DIST_DIR" ]] || fail "Distribution directory not found: ${DIST_DIR}"
+  mkdir -p "$(dirname "$APPCAST_PATH")"
 
   local generate_appcast
   local key_file
@@ -38,10 +40,11 @@ main() {
   trap 'rm -f "$key_file"' EXIT
   printf '%s' "$SPARKLE_PRIVATE_KEY" > "$key_file"
 
-  curl -fsSL "$RELEASE_LINK/releases/latest/download/appcast.xml" -o "$DIST_DIR/appcast.xml" 2>/dev/null || true
+  curl -fsSL "$RELEASE_LINK/releases/latest/download/appcast.xml" -o "$APPCAST_PATH" 2>/dev/null || true
 
   "$generate_appcast" \
     --ed-key-file "$key_file" \
+    -o "$APPCAST_PATH" \
     --download-url-prefix "$DOWNLOAD_URL_PREFIX/" \
     --link "$RELEASE_LINK" \
     "$DIST_DIR"

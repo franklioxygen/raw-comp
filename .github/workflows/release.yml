@@ -79,11 +79,14 @@ jobs:
       - name: Generate appcast
         id: appcast
         env:
-          DIST_DIR: dist
+          DIST_DIR: dist/appcast-input
+          APPCAST_PATH: dist/appcast.xml
           DOWNLOAD_URL_PREFIX: https://github.com/${{ github.repository }}/releases/download/${{ steps.version.outputs.tag }}
           RELEASE_LINK: https://github.com/${{ github.repository }}
           SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
         run: |
+          mkdir -p "$DIST_DIR"
+          cp "${{ steps.package.outputs.zip }}" "$DIST_DIR/"
           ./scripts/generate-appcast.sh
           echo "path=dist/appcast.xml" >> "$GITHUB_OUTPUT"
 
