@@ -31,6 +31,7 @@
 "settings.check_updates" = "업데이트 확인…";
 "settings.footer.available" = "테마와 언어 변경은 즉시 적용됩니다. 현지화 리소스가 있으면 선택한 언어가 사용됩니다.";
 "settings.footer.unavailable" = "이 빌드에서는 Sparkle이 구성되지 않아 업데이트 제어를 사용할 수 없습니다.";
+"settings.version" = "버전 %@ (빌드 %@)";
 "settings.theme.system" = "시스템";
 "settings.theme.light" = "라이트";
 "settings.theme.dark" = "다크";

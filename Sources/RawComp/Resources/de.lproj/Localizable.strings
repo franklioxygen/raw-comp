@@ -31,6 +31,7 @@
 "settings.check_updates" = "Nach Updates suchen…";
 "settings.footer.available" = "Änderungen an Thema und Sprache werden sofort angewendet. Die Sprachauswahl wird verwendet, wenn lokalisierte Ressourcen verfügbar sind.";
 "settings.footer.unavailable" = "Update-Steuerelemente sind nicht verfügbar, weil Sparkle für diesen Build nicht konfiguriert ist.";
+"settings.version" = "Version %@ (Build %@)";
 "settings.theme.system" = "System";
 "settings.theme.light" = "Hell";
 "settings.theme.dark" = "Dunkel";

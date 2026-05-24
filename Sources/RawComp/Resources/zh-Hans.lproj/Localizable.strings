@@ -31,6 +31,7 @@
 "settings.check_updates" = "检查更新…";
 "settings.footer.available" = "主题和语言更改会立即生效。语言选择会在有本地化资源时使用。";
 "settings.footer.unavailable" = "此构建未配置 Sparkle，因此更新控制不可用。";
+"settings.version" = "版本 %@（构建 %@）";
 "settings.theme.system" = "跟随系统";
 "settings.theme.light" = "浅色";
 "settings.theme.dark" = "深色";

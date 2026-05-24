@@ -25,9 +25,6 @@ struct RawCompApp: App {
 
         settingsController.attachUpdater(updater)
 
-        Task { @MainActor in
-            AppIconController.applyBundledIcon()
-        }
     }
 
     var body: some Scene {

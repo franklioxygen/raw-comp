@@ -31,6 +31,7 @@
 "settings.check_updates" = "Buscar actualizaciones…";
 "settings.footer.available" = "Los cambios de tema e idioma se aplican de inmediato. La selección de idioma se usa cuando hay recursos localizados disponibles.";
 "settings.footer.unavailable" = "Los controles de actualización no están disponibles porque Sparkle no está configurado para esta compilación.";
+"settings.version" = "Versión %@ (compilación %@)";
 "settings.theme.system" = "Sistema";
 "settings.theme.light" = "Claro";
 "settings.theme.dark" = "Oscuro";

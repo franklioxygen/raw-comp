@@ -227,11 +227,15 @@ private struct AdvancedSettingsView: View {
             }
             .formStyle(.grouped)
 
-            Text(settingsController.canManageAutoUpdate
-                ? L10n.string("settings.footer.available")
-                : L10n.string("settings.footer.unavailable"))
-                .font(.caption)
-                .foregroundStyle(.secondary)
+            VStack(alignment: .leading, spacing: 6) {
+                Text(settingsController.canManageAutoUpdate
+                    ? L10n.string("settings.footer.available")
+                    : L10n.string("settings.footer.unavailable"))
+                Text(L10n.string("settings.version", AppVersion.marketingVersion, AppVersion.buildNumber))
+            }
+            .font(.caption)
+            .foregroundStyle(.secondary)
+            .frame(maxWidth: .infinity, alignment: .leading)
 
             HStack {
                 Spacer()

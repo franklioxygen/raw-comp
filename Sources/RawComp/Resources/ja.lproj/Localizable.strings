@@ -31,6 +31,7 @@
 "settings.check_updates" = "アップデートを確認…";
 "settings.footer.available" = "テーマと言語の変更はすぐに反映されます。ローカライズ済みリソースがある場合は、その言語設定が使用されます。";
 "settings.footer.unavailable" = "このビルドでは Sparkle が設定されていないため、更新操作は利用できません。";
+"settings.version" = "バージョン %@ (ビルド %@)";
 "settings.theme.system" = "システム";
 "settings.theme.light" = "ライト";
 "settings.theme.dark" = "ダーク";
