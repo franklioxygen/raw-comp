@@ -1,0 +1,112 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing release tag to publish
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref }}
+
+      - name: Parse version from tag
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            TAG="${{ inputs.tag }}"
+          else
+            TAG="${GITHUB_REF#refs/tags/}"
+          fi
+
+          case "$TAG" in
+            v*)
+              ;;
+            *)
+              echo "::error::Expected tag in the form v<version>, got: $TAG"
+              exit 1
+              ;;
+          esac
+
+          VERSION="${TAG#v}"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Build archive
+        run: |
+          xcodebuild \
+            -scheme RawComp \
+            -destination "generic/platform=macOS" \
+            -archivePath .build/archive/RawComp.xcarchive \
+            -derivedDataPath .build/archive-derived \
+            archive
+
+      - name: Package app
+        env:
+          SPARKLE_FEED_URL: https://github.com/${{ github.repository }}/releases/latest/download/appcast.xml
+          SPARKLE_PUBLIC_ED_KEY: ${{ secrets.SPARKLE_PUBLIC_ED_KEY }}
+        run: ./scripts/package-app.sh
+
+      - name: Package release assets
+        id: package
+        run: |
+          APP_PATH="dist/RawComp.app"
+          ZIP_PATH="dist/RawComp-${{ steps.version.outputs.version }}.app.zip"
+          CHECKSUM_PATH="dist/RawComp-${{ steps.version.outputs.version }}.sha256"
+
+          ditto -c -k --keepParent "$APP_PATH" "$ZIP_PATH"
+          (cd dist && shasum -a 256 "$(basename "$ZIP_PATH")" > "$(basename "$CHECKSUM_PATH")")
+
+          echo "zip=$ZIP_PATH" >> "$GITHUB_OUTPUT"
+          echo "checksum=$CHECKSUM_PATH" >> "$GITHUB_OUTPUT"
+
+      - name: Generate appcast
+        id: appcast
+        if: ${{ secrets.SPARKLE_PRIVATE_KEY != '' }}
+        env:
+          DIST_DIR: dist
+          DOWNLOAD_URL_PREFIX: https://github.com/${{ github.repository }}/releases/download/${{ steps.version.outputs.tag }}
+          RELEASE_LINK: https://github.com/${{ github.repository }}
+          SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
+        run: |
+          if ./scripts/generate-appcast.sh; then
+            echo "path=dist/appcast.xml" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::Skipping appcast upload because generate_appcast is unavailable."
+          fi
+
+      - name: Create or update GitHub release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="${{ steps.version.outputs.tag }}"
+
+          assets=(
+            "${{ steps.package.outputs.zip }}"
+            "${{ steps.package.outputs.checksum }}"
+          )
+
+          if [ -n "${{ steps.appcast.outputs.path }}" ]; then
+            assets+=("${{ steps.appcast.outputs.path }}")
+          fi
+
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" "${assets[@]}" --clobber
+          else
+            gh release create "$TAG" "${assets[@]}" \
+              --title "$TAG" \
+              --generate-notes \
+              --verify-tag
+          fi
