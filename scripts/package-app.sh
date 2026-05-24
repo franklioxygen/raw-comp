@@ -144,6 +144,7 @@ main() {
   require_cmd ditto
   require_cmd sips
   require_cmd iconutil
+  require_cmd install_name_tool
   require_cmd codesign
 
   [[ -f "$EXECUTABLE_PATH" ]] || fail "Archived executable not found: ${EXECUTABLE_PATH}"
@@ -165,6 +166,7 @@ main() {
 
   ditto "$EXECUTABLE_PATH" "$MACOS_DIR/$APP_NAME"
   chmod +x "$MACOS_DIR/$APP_NAME"
+  install_name_tool -add_rpath "@executable_path/../Frameworks" "$MACOS_DIR/$APP_NAME"
   ditto "$RESOURCE_BUNDLE_PATH" "$RESOURCES_DIR/$(basename "$RESOURCE_BUNDLE_PATH")"
   ditto "$ICON_SOURCE" "$ICON_TARGET"
   copy_sparkle_framework
