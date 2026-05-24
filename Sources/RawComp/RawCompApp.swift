@@ -1,5 +1,6 @@
 import Sparkle
 import SwiftUI
+import os.log
 
 @main
 struct RawCompApp: App {
@@ -7,9 +8,19 @@ struct RawCompApp: App {
     private let updaterController: SPUStandardUpdaterController?
 
     init() {
-        let updaterController = SPUStandardUpdaterController(startingUpdater: true, updaterDelegate: nil, userDriverDelegate: nil)
+        let updaterController = SPUStandardUpdaterController(startingUpdater: false, updaterDelegate: nil, userDriverDelegate: nil)
         self.updaterController = updaterController
-        _settingsController = StateObject(wrappedValue: AppSettingsController(updater: updaterController.updater))
+
+        let updater: SPUUpdater?
+        do {
+            try updaterController.updater.start()
+            updater = updaterController.updater
+        } catch {
+            Logger.updater.warning("Sparkle updater failed to start: \(error.localizedDescription, privacy: .public)")
+            updater = nil
+        }
+
+        _settingsController = StateObject(wrappedValue: AppSettingsController(updater: updater))
 
         Task { @MainActor in
             AppIconController.applyBundledIcon()
@@ -33,4 +44,8 @@ struct RawCompApp: App {
             }
         }
     }
+}
+
+private extension Logger {
+    static let updater = Logger(subsystem: "com.rawcomp.app", category: "updater")
 }
