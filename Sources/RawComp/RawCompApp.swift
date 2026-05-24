@@ -7,11 +7,9 @@ struct RawCompApp: App {
     private let updaterController: SPUStandardUpdaterController?
 
     init() {
-        let updaterController = SparkleConfiguration.isConfigured
-            ? SPUStandardUpdaterController(startingUpdater: true, updaterDelegate: nil, userDriverDelegate: nil)
-            : nil
+        let updaterController = SPUStandardUpdaterController(startingUpdater: true, updaterDelegate: nil, userDriverDelegate: nil)
         self.updaterController = updaterController
-        _settingsController = StateObject(wrappedValue: AppSettingsController(updater: updaterController?.updater))
+        _settingsController = StateObject(wrappedValue: AppSettingsController(updater: updaterController.updater))
 
         Task { @MainActor in
             AppIconController.applyBundledIcon()
@@ -34,20 +32,5 @@ struct RawCompApp: App {
                 }
             }
         }
-    }
-}
-
-private enum SparkleConfiguration {
-    static var isConfigured: Bool {
-        guard
-            let infoDictionary = Bundle.main.infoDictionary,
-            let feedURL = infoDictionary["SUFeedURL"] as? String,
-            let publicKey = infoDictionary["SUPublicEDKey"] as? String
-        else {
-            return false
-        }
-
-        return !feedURL.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
-            !publicKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 }
