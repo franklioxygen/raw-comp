@@ -1,4 +1,4 @@
 enum AppVersion {
-    static let marketingVersion = "0.1.9"
-    static let buildNumber = "10"
+    static let marketingVersion = "0.1.10"
+    static let buildNumber = "11"
 }
