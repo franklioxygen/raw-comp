@@ -77,14 +77,15 @@ jobs:
 
       - name: Generate appcast
         id: appcast
-        if: ${{ secrets.SPARKLE_PRIVATE_KEY != '' }}
         env:
           DIST_DIR: dist
           DOWNLOAD_URL_PREFIX: https://github.com/${{ github.repository }}/releases/download/${{ steps.version.outputs.tag }}
           RELEASE_LINK: https://github.com/${{ github.repository }}
           SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
         run: |
-          if ./scripts/generate-appcast.sh; then
+          if [ -z "$SPARKLE_PRIVATE_KEY" ]; then
+            echo "::warning::Skipping appcast generation because SPARKLE_PRIVATE_KEY is not configured."
+          elif ./scripts/generate-appcast.sh; then
             echo "path=dist/appcast.xml" >> "$GITHUB_OUTPUT"
           else
             echo "::warning::Skipping appcast upload because generate_appcast is unavailable."
