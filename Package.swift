@@ -5,6 +5,7 @@ import PackageDescription
 
 let package = Package(
     name: "RawComp",
+    defaultLocalization: "en",
     platforms: [
         .macOS(.v14)
     ],

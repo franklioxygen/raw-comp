@@ -32,7 +32,7 @@ final class WorkspaceStore: ObservableObject {
             scheduleAdjustmentRefresh()
         }
     }
-    @Published var statusMessage = "Open images to compare 2, 3, 4, or 6 panes."
+    @Published var statusMessage = L10n.string("status.open_images")
 
     let panes: [ImagePaneState]
 
@@ -71,7 +71,7 @@ final class WorkspaceStore: ObservableObject {
         panel.canChooseFiles = true
         panel.canChooseDirectories = false
         panel.allowsMultipleSelection = paneID == nil
-        panel.message = "Choose standard images or RAW files to compare."
+        panel.message = L10n.string("open_panel.message")
 
         if panel.runModal() == .OK {
             importImages(urls: panel.urls, replacing: paneID)
@@ -81,7 +81,7 @@ final class WorkspaceStore: ObservableObject {
     func importImages(urls: [URL], replacing paneID: UUID? = nil) {
         let normalizedURLs = urls.filter { !$0.pathExtension.isEmpty || $0.hasDirectoryPath == false }
         guard !normalizedURLs.isEmpty else {
-            statusMessage = "No loadable files were selected."
+            statusMessage = L10n.string("status.no_loadable_files")
             return
         }
 
@@ -101,7 +101,7 @@ final class WorkspaceStore: ObservableObject {
         }
 
         if normalizedURLs.count > targets.count {
-            statusMessage = "Loaded the first \(targets.count) files for the current \(layout.paneCount)-pane layout."
+            statusMessage = L10n.string("status.loaded_first_n_files", targets.count, layout.paneCount)
         }
     }
 
@@ -192,17 +192,22 @@ final class WorkspaceStore: ObservableObject {
 
         let rect = activePane.viewport.visibleRectNormalized.clampedUnit()
         guard rect.width > 0, rect.height > 0 else {
-            statusMessage = "No visible region is available to highlight yet."
+            statusMessage = L10n.string("status.no_visible_region")
             return
         }
 
         highlightRect = rect
-        statusMessage = "Captured a synchronized highlight region from \(activePane.title)."
+        statusMessage = L10n.string("status.captured_region", activePane.title)
     }
 
     func clearHighlight() {
         highlightRect = nil
-        statusMessage = "Cleared the synchronized highlight region."
+        statusMessage = L10n.string("status.cleared_region")
+    }
+
+    func refreshLocalization() {
+        objectWillChange.send()
+        panes.forEach { $0.objectWillChange.send() }
     }
 
     func resetAdjustments() {
@@ -218,7 +223,7 @@ final class WorkspaceStore: ObservableObject {
         pane.viewport = ViewportState()
         pane.adjustmentRevision += 1
         activePaneID = pane.id
-        statusMessage = "Loading \(url.lastPathComponent)..."
+        statusMessage = L10n.string("status.loading_file", url.lastPathComponent)
 
         Task {
             do {
@@ -233,8 +238,8 @@ final class WorkspaceStore: ObservableObject {
                     pane.loadState = .ready
                     pane.viewport = ViewportState()
                     statusMessage = image.isPreview
-                        ? "Loaded \(image.metadata.fileName) using a preview pipeline."
-                        : "Loaded \(image.metadata.fileName)."
+                        ? L10n.string("status.loaded_preview", image.metadata.fileName)
+                        : L10n.string("status.loaded_file", image.metadata.fileName)
                     applyCurrentAdjustments(to: pane, loadedImage: image)
                 }
             } catch {

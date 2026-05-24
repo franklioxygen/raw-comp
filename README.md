@@ -4,6 +4,10 @@
 <img width="300" height="300" alt="Gemini_Generated_Image_abysf5abysf5abys" src="https://github.com/user-attachments/assets/f243fc9f-c521-4b75-a801-7424d81ad1ad" />
 </p>
 
+<p align="center">
+  <a href="README.zh-CN.md">中文文档</a>
+</p>
+
 RawComp is a macOS app for comparing multiple images side by side.
 
 It is built for photographers, retouchers, and reviewers who need to inspect subtle differences between RAW files, compressed exports, edits, crops, sharpness, color, and local detail.
@@ -62,6 +66,10 @@ The current build uses macOS image decoders and Quick Look preview fallback. Tha
 
 - macOS 14 or newer
 - Xcode with Swift 6 support if you want to run from source
+
+## Download
+
+Download the latest build from [Releases](https://github.com/franklioxygen/raw-comp/releases).
 
 ## Run RawComp
 

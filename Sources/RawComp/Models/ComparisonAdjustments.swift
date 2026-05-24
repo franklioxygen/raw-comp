@@ -15,9 +15,9 @@ struct ComparisonAdjustments: Equatable, Sendable {
 
     var statusText: String {
         if isNeutral {
-            return "Neutral"
+            return L10n.string("adjustments.status.neutral")
         }
 
-        return "Active"
+        return L10n.string("adjustments.status.active")
     }
 }

@@ -64,12 +64,15 @@ jobs:
         run: |
           APP_PATH="dist/RawComp.app"
           ZIP_PATH="dist/RawComp-${{ steps.version.outputs.version }}.app.zip"
+          DMG_PATH="dist/RawComp-${{ steps.version.outputs.version }}.dmg"
           CHECKSUM_PATH="dist/RawComp-${{ steps.version.outputs.version }}.sha256"
 
           ditto -c -k --keepParent "$APP_PATH" "$ZIP_PATH"
+          ./scripts/package-dmg.sh
           (cd dist && shasum -a 256 "$(basename "$ZIP_PATH")" > "$(basename "$CHECKSUM_PATH")")
 
           echo "zip=$ZIP_PATH" >> "$GITHUB_OUTPUT"
+          echo "dmg=$DMG_PATH" >> "$GITHUB_OUTPUT"
           echo "checksum=$CHECKSUM_PATH" >> "$GITHUB_OUTPUT"
 
       - name: Generate appcast
@@ -95,6 +98,7 @@ jobs:
 
           assets=(
             "${{ steps.package.outputs.zip }}"
+            "${{ steps.package.outputs.dmg }}"
             "${{ steps.package.outputs.checksum }}"
           )
 

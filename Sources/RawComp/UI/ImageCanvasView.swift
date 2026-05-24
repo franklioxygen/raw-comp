@@ -364,7 +364,7 @@ fileprivate final class ImageDocumentView: NSView {
         paragraphStyle.alignment = .center
 
         let text = NSAttributedString(
-            string: "Load an image to begin comparing.",
+            string: L10n.string("canvas.placeholder"),
             attributes: [
                 .font: NSFont.systemFont(ofSize: 16, weight: .medium),
                 .foregroundColor: NSColor.secondaryLabelColor,

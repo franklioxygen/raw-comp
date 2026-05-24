@@ -2,10 +2,15 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject private var store = WorkspaceStore()
+    @ObservedObject var settingsController: AppSettingsController
+    @State private var showingAdvancedSettings = false
 
     var body: some View {
         VStack(spacing: 0) {
-            WorkspaceToolbar(store: store)
+            WorkspaceToolbar(
+                store: store,
+                onOpenAdvancedSettings: { showingAdvancedSettings = true }
+            )
             Divider()
             HSplitView {
                 ComparisonGridView(store: store)
@@ -17,7 +22,14 @@ struct ContentView: View {
                 }
             }
         }
+        .id(settingsController.language.rawValue)
         .background(Color(nsColor: .windowBackgroundColor))
+        .onChange(of: settingsController.language) {
+            store.refreshLocalization()
+        }
+        .sheet(isPresented: $showingAdvancedSettings) {
+            AdvancedSettingsView(settingsController: settingsController)
+        }
     }
 }
 
@@ -34,34 +46,34 @@ private struct InspectorView: View {
 
                 Divider()
 
-                Text("Inspector")
+                L10n.text("inspector.title")
                     .font(.headline)
 
                 if let metadata {
                     VStack(alignment: .leading, spacing: 5) {
-                        inspectorRow("File", metadata.fileName)
-                        inspectorRow("Type", metadata.fileType)
-                        inspectorRow("Size", metadata.dimensionsText)
-                        inspectorRow("Disk", metadata.fileSizeText)
-                        inspectorRow("Color", metadata.colorModel ?? "Unknown")
-                        inspectorRow("Profile", metadata.profileName ?? "Unknown")
-                        inspectorRow("Pipeline", metadata.usesRawPipeline ? "RAW / Preview" : "Standard")
-                        inspectorRow("Zoom", zoomText(for: pane?.viewport))
-                        inspectorRow("Rotation", rotationText(for: pane?.viewport))
+                        inspectorRow(L10n.string("inspector.file"), metadata.fileName)
+                        inspectorRow(L10n.string("inspector.type"), metadata.fileType)
+                        inspectorRow(L10n.string("inspector.size"), metadata.dimensionsText)
+                        inspectorRow(L10n.string("inspector.disk"), metadata.fileSizeText)
+                        inspectorRow(L10n.string("inspector.color"), metadata.colorModel ?? L10n.string("common.unknown"))
+                        inspectorRow(L10n.string("inspector.profile"), metadata.profileName ?? L10n.string("common.unknown"))
+                        inspectorRow(L10n.string("inspector.pipeline"), metadata.usesRawPipeline ? L10n.string("inspector.pipeline.raw_preview") : L10n.string("inspector.pipeline.standard"))
+                        inspectorRow(L10n.string("inspector.zoom"), zoomText(for: pane?.viewport))
+                        inspectorRow(L10n.string("inspector.rotation"), rotationText(for: pane?.viewport))
                     }
 
                     if !metadata.exifFields.isEmpty {
                         Divider()
-                        Text("EXIF")
+                        L10n.text("inspector.exif")
                             .font(.subheadline.weight(.semibold))
                         VStack(alignment: .leading, spacing: 5) {
                             ForEach(metadata.exifFields) { field in
-                                inspectorRow(field.label, field.value)
+                                inspectorRow(L10n.string(field.labelKey), field.value)
                             }
                         }
                     }
                 } else {
-                    Text("Select a pane with an image to inspect file details and viewport state.")
+                    L10n.text("inspector.empty")
                         .foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
@@ -76,31 +88,31 @@ private struct InspectorView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Comparison Adjustments")
+                    L10n.text("adjustments.title")
                         .font(.title3.weight(.semibold))
-                    Text("Applied to every loaded image pane.")
+                    L10n.text("adjustments.subtitle")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
 
                 Spacer()
 
-                Button("Reset") {
+                Button(L10n.string("common.reset")) {
                     store.resetAdjustments()
                 }
                 .disabled(store.adjustments.isNeutral)
             }
 
             AdjustmentSliderRow(
-                title: "Exposure",
+                title: L10n.string("adjustments.exposure"),
                 value: binding(\.exposureEV),
                 range: -2...2,
                 step: 0.05,
-                valueFormatter: { String(format: "%.2f EV", $0) }
+                valueFormatter: { String(format: L10n.string("format.ev"), $0) }
             )
 
             AdjustmentSliderRow(
-                title: "Brightness",
+                title: L10n.string("adjustments.brightness"),
                 value: binding(\.brightness),
                 range: -0.4...0.4,
                 step: 0.01,
@@ -108,7 +120,7 @@ private struct InspectorView: View {
             )
 
             AdjustmentSliderRow(
-                title: "Contrast",
+                title: L10n.string("adjustments.contrast"),
                 value: binding(\.contrast),
                 range: 0.5...2.5,
                 step: 0.01,
@@ -116,7 +128,7 @@ private struct InspectorView: View {
             )
 
             AdjustmentSliderRow(
-                title: "Saturation",
+                title: L10n.string("adjustments.saturation"),
                 value: binding(\.saturation),
                 range: 0...2,
                 step: 0.01,
@@ -124,7 +136,7 @@ private struct InspectorView: View {
             )
 
             AdjustmentSliderRow(
-                title: "Detail",
+                title: L10n.string("adjustments.detail"),
                 value: binding(\.sharpness),
                 range: 0...2,
                 step: 0.01,
@@ -152,19 +164,19 @@ private struct InspectorView: View {
 
     private func zoomText(for viewport: ViewportState?) -> String {
         guard let viewport else {
-            return "n/a"
+            return L10n.string("common.not_available")
         }
 
-        return "\(Int(viewport.zoomScale * 100))%"
+        return L10n.string("format.percent", Int(viewport.zoomScale * 100))
     }
 
     private func rotationText(for viewport: ViewportState?) -> String {
         guard let viewport else {
-            return "n/a"
+            return L10n.string("common.not_available")
         }
 
         let degrees = viewport.rotationQuarterTurns * 90
-        return "\(degrees) degrees"
+        return L10n.string("format.degrees", degrees)
     }
 
     private func binding(_ keyPath: WritableKeyPath<ComparisonAdjustments, Double>) -> Binding<Double> {
@@ -172,6 +184,65 @@ private struct InspectorView: View {
             get: { store.adjustments[keyPath: keyPath] },
             set: { store.adjustments[keyPath: keyPath] = $0 }
         )
+    }
+}
+
+private struct AdvancedSettingsView: View {
+    @ObservedObject var settingsController: AppSettingsController
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 18) {
+            L10n.text("settings.title")
+                .font(.title2.weight(.semibold))
+
+            Form {
+                Picker(L10n.string("settings.appearance"), selection: $settingsController.theme) {
+                    ForEach(AppTheme.allCases) { theme in
+                        L10n.text(theme.titleKey).tag(theme)
+                    }
+                }
+
+                Picker(L10n.string("settings.language"), selection: $settingsController.language) {
+                    ForEach(AppLanguage.allCases) { language in
+                        L10n.text(language.titleKey).tag(language)
+                    }
+                }
+
+                Toggle(
+                    L10n.string("settings.autoupdate"),
+                    isOn: Binding(
+                        get: { settingsController.autoUpdateEnabled },
+                        set: { settingsController.setAutoUpdateEnabled($0) }
+                    )
+                )
+                .disabled(!settingsController.canManageAutoUpdate)
+
+                HStack {
+                    L10n.text("settings.manual_update")
+                    Spacer()
+                    Button(L10n.string("settings.check_updates"), action: settingsController.checkForUpdates)
+                        .disabled(!settingsController.canCheckForUpdates)
+                }
+            }
+            .formStyle(.grouped)
+
+            Text(settingsController.canManageAutoUpdate
+                ? L10n.string("settings.footer.available")
+                : L10n.string("settings.footer.unavailable"))
+                .font(.caption)
+                .foregroundStyle(.secondary)
+
+            HStack {
+                Spacer()
+                Button(L10n.string("common.done")) {
+                    dismiss()
+                }
+                .keyboardShortcut(.defaultAction)
+            }
+        }
+        .padding(20)
+        .frame(width: 440)
     }
 }
 

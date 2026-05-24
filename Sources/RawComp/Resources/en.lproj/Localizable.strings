@@ -1,0 +1,126 @@
+"inspector.title" = "Inspector";
+"inspector.file" = "File";
+"inspector.type" = "Type";
+"inspector.size" = "Size";
+"inspector.disk" = "Disk";
+"inspector.color" = "Color";
+"inspector.profile" = "Profile";
+"inspector.pipeline" = "Pipeline";
+"inspector.pipeline.raw_preview" = "RAW / Preview";
+"inspector.pipeline.standard" = "Standard";
+"inspector.zoom" = "Zoom";
+"inspector.rotation" = "Rotation";
+"inspector.exif" = "EXIF";
+"inspector.empty" = "Select a pane with an image to inspect file details and viewport state.";
+
+"adjustments.title" = "Comparison Adjustments";
+"adjustments.subtitle" = "Applied to every loaded image pane.";
+"adjustments.exposure" = "Exposure";
+"adjustments.brightness" = "Brightness";
+"adjustments.contrast" = "Contrast";
+"adjustments.saturation" = "Saturation";
+"adjustments.detail" = "Detail";
+"adjustments.status.neutral" = "Neutral";
+"adjustments.status.active" = "Active";
+
+"settings.title" = "Advanced Settings";
+"settings.appearance" = "Appearance";
+"settings.language" = "Language";
+"settings.autoupdate" = "Enable automatic update checks";
+"settings.manual_update" = "Manual update";
+"settings.check_updates" = "Check for Updates…";
+"settings.footer.available" = "Theme and language changes apply immediately. Language selection is used where localized resources are available.";
+"settings.footer.unavailable" = "Update controls are unavailable because Sparkle is not configured for this build.";
+"settings.theme.system" = "System";
+"settings.theme.light" = "Light";
+"settings.theme.dark" = "Dark";
+"settings.language.system" = "System";
+"settings.language.english" = "English";
+"settings.language.chinese" = "Chinese";
+"settings.language.french" = "French";
+"settings.language.german" = "German";
+"settings.language.italian" = "Italian";
+"settings.language.japanese" = "Japanese";
+"settings.language.korean" = "Korean";
+"settings.language.portuguese" = "Portuguese";
+"settings.language.spanish" = "Spanish";
+
+"toolbar.open_images" = "Open images";
+"toolbar.linked" = "Linked panes are synced";
+"toolbar.unlinked" = "Panes move independently";
+"toolbar.mark_region" = "Mark synchronized region";
+"toolbar.remove_region" = "Remove synchronized region";
+"toolbar.hide_exif" = "Hide EXIF overlay";
+"toolbar.show_exif" = "Show EXIF overlay";
+"toolbar.hide_top_bar" = "Hide top info bar";
+"toolbar.show_top_bar" = "Show top info bar";
+"toolbar.zoom_out" = "Zoom out";
+"toolbar.zoom_in" = "Zoom in";
+"toolbar.fit_to_window" = "Fit to window";
+"toolbar.actual_pixels" = "Actual pixels";
+"toolbar.rotate_left" = "Rotate left";
+"toolbar.rotate_right" = "Rotate right";
+"toolbar.advanced_settings" = "Advanced settings";
+"toolbar.hide_inspector" = "Hide inspector";
+"toolbar.show_inspector" = "Show inspector";
+
+"error.unreadable_file" = "Could not read %@.";
+"error.no_decoder" = "No available decoder could open %@.";
+"error.quicklook_failed" = "Quick Look could not generate a preview for %@.";
+
+"exif.camera_make" = "Camera Make";
+"exif.camera_model" = "Camera Model";
+"exif.lens" = "Lens";
+"exif.date_original" = "Date Original";
+"exif.exposure" = "Exposure";
+"exif.aperture" = "Aperture";
+"exif.iso" = "ISO";
+"exif.focal_length" = "Focal Length";
+"exif.exposure_bias" = "Exposure Bias";
+"exif.metering" = "Metering";
+"exif.white_balance" = "White Balance";
+"exif.flash" = "Flash";
+"exif.software" = "Software";
+"exif.artist" = "Artist";
+"exif.gps_latitude" = "GPS Latitude";
+"exif.gps_longitude" = "GPS Longitude";
+
+"format.ev" = "%.2f EV";
+"format.percent" = "%d%%";
+"format.degrees" = "%d degrees";
+"format.aperture" = "f/%@";
+"format.focal_length" = "%@ mm";
+"format.bias_ev" = "%@ EV";
+"format.deg" = "%@ deg";
+"format.zero_seconds" = "0 s";
+"format.fraction_seconds" = "1/%d s";
+"format.seconds" = "%@ s";
+"format.iso" = "ISO %@";
+
+"canvas.placeholder" = "Load an image to begin comparing.";
+
+"pane.state.empty" = "Empty";
+"pane.state.loading" = "Loading";
+"pane.state.ready" = "Ready";
+"pane.title" = "Pane %d";
+"pane.drop_or_load" = "Drop a file or load one into this pane.";
+"pane.empty_description" = "Load a standard image or a RAW file to start comparing.";
+"pane.load_image" = "Load Image";
+
+"common.unknown" = "Unknown";
+"common.not_available" = "n/a";
+"common.reset" = "Reset";
+"common.done" = "Done";
+
+"layout.title" = "%d Up";
+
+"status.open_images" = "Open images to compare 2, 3, 4, or 6 panes.";
+"open_panel.message" = "Choose standard images or RAW files to compare.";
+"status.no_loadable_files" = "No loadable files were selected.";
+"status.loaded_first_n_files" = "Loaded the first %d files for the current %d-pane layout.";
+"status.no_visible_region" = "No visible region is available to highlight yet.";
+"status.captured_region" = "Captured a synchronized highlight region from %@.";
+"status.cleared_region" = "Cleared the synchronized highlight region.";
+"status.loading_file" = "Loading %@...";
+"status.loaded_preview" = "Loaded %@ using a preview pipeline.";
+"status.loaded_file" = "Loaded %@.";

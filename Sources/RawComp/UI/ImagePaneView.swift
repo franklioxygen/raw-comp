@@ -54,7 +54,7 @@ struct ImagePaneView: View {
 
     private var subtitleText: String {
         guard let metadata = pane.loadedImage?.metadata else {
-            return "Drop a file or load one into this pane."
+            return L10n.string("pane.drop_or_load")
         }
 
         return metadata.dimensionsText
@@ -66,15 +66,15 @@ struct ImagePaneView: View {
                 .font(.system(size: 34))
                 .foregroundStyle(.secondary)
 
-            Text("Pane \(pane.slot + 1)")
+            Text(L10n.string("pane.title", pane.slot + 1))
                 .font(.title3.weight(.semibold))
 
-            Text("Load a standard image or a RAW file to start comparing.")
+            L10n.text("pane.empty_description")
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.secondary)
                 .frame(maxWidth: 260)
 
-            Button("Load Image", systemImage: "plus") {
+            Button(L10n.string("pane.load_image"), systemImage: "plus") {
                 store.openImages(replacing: pane.id)
             }
         }

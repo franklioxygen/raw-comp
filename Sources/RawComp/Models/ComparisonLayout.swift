@@ -24,7 +24,7 @@ enum ComparisonLayout: Int, CaseIterable, Identifiable, Sendable {
     }
 
     var title: String {
-        "\(rawValue) Up"
+        L10n.string("layout.title", rawValue)
     }
 
     var menuIconSystemName: String {

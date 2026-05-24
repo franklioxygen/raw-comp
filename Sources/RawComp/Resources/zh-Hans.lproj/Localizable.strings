@@ -1,0 +1,126 @@
+"inspector.title" = "检查器";
+"inspector.file" = "文件";
+"inspector.type" = "类型";
+"inspector.size" = "尺寸";
+"inspector.disk" = "磁盘";
+"inspector.color" = "颜色";
+"inspector.profile" = "配置文件";
+"inspector.pipeline" = "处理管线";
+"inspector.pipeline.raw_preview" = "RAW / 预览";
+"inspector.pipeline.standard" = "标准";
+"inspector.zoom" = "缩放";
+"inspector.rotation" = "旋转";
+"inspector.exif" = "EXIF";
+"inspector.empty" = "选择一个包含图像的面板以查看文件详情和视口状态。";
+
+"adjustments.title" = "对比调整";
+"adjustments.subtitle" = "应用到所有已加载的图像面板。";
+"adjustments.exposure" = "曝光";
+"adjustments.brightness" = "亮度";
+"adjustments.contrast" = "对比度";
+"adjustments.saturation" = "饱和度";
+"adjustments.detail" = "细节";
+"adjustments.status.neutral" = "默认";
+"adjustments.status.active" = "已启用";
+
+"settings.title" = "高级设置";
+"settings.appearance" = "外观";
+"settings.language" = "语言";
+"settings.autoupdate" = "启用自动检查更新";
+"settings.manual_update" = "手动更新";
+"settings.check_updates" = "检查更新…";
+"settings.footer.available" = "主题和语言更改会立即生效。语言选择会在有本地化资源时使用。";
+"settings.footer.unavailable" = "此构建未配置 Sparkle，因此更新控制不可用。";
+"settings.theme.system" = "跟随系统";
+"settings.theme.light" = "浅色";
+"settings.theme.dark" = "深色";
+"settings.language.system" = "跟随系统";
+"settings.language.english" = "英语";
+"settings.language.chinese" = "中文";
+"settings.language.french" = "法语";
+"settings.language.german" = "德语";
+"settings.language.italian" = "意大利语";
+"settings.language.japanese" = "日语";
+"settings.language.korean" = "韩语";
+"settings.language.portuguese" = "葡萄牙语";
+"settings.language.spanish" = "西班牙语";
+
+"toolbar.open_images" = "打开图像";
+"toolbar.linked" = "联动画面已同步";
+"toolbar.unlinked" = "画面独立移动";
+"toolbar.mark_region" = "标记同步区域";
+"toolbar.remove_region" = "移除同步区域";
+"toolbar.hide_exif" = "隐藏 EXIF 叠层";
+"toolbar.show_exif" = "显示 EXIF 叠层";
+"toolbar.hide_top_bar" = "隐藏顶部信息栏";
+"toolbar.show_top_bar" = "显示顶部信息栏";
+"toolbar.zoom_out" = "缩小";
+"toolbar.zoom_in" = "放大";
+"toolbar.fit_to_window" = "适合窗口";
+"toolbar.actual_pixels" = "实际像素";
+"toolbar.rotate_left" = "向左旋转";
+"toolbar.rotate_right" = "向右旋转";
+"toolbar.advanced_settings" = "高级设置";
+"toolbar.hide_inspector" = "隐藏检查器";
+"toolbar.show_inspector" = "显示检查器";
+
+"error.unreadable_file" = "无法读取 %@。";
+"error.no_decoder" = "没有可用的解码器可以打开 %@。";
+"error.quicklook_failed" = "快速查看无法为 %@ 生成预览。";
+
+"exif.camera_make" = "相机品牌";
+"exif.camera_model" = "相机型号";
+"exif.lens" = "镜头";
+"exif.date_original" = "拍摄时间";
+"exif.exposure" = "曝光";
+"exif.aperture" = "光圈";
+"exif.iso" = "ISO";
+"exif.focal_length" = "焦距";
+"exif.exposure_bias" = "曝光补偿";
+"exif.metering" = "测光";
+"exif.white_balance" = "白平衡";
+"exif.flash" = "闪光灯";
+"exif.software" = "软件";
+"exif.artist" = "作者";
+"exif.gps_latitude" = "GPS 纬度";
+"exif.gps_longitude" = "GPS 经度";
+
+"format.ev" = "%.2f EV";
+"format.percent" = "%d%%";
+"format.degrees" = "%d 度";
+"format.aperture" = "f/%@";
+"format.focal_length" = "%@ mm";
+"format.bias_ev" = "%@ EV";
+"format.deg" = "%@ 度";
+"format.zero_seconds" = "0 秒";
+"format.fraction_seconds" = "1/%d 秒";
+"format.seconds" = "%@ 秒";
+"format.iso" = "ISO %@";
+
+"canvas.placeholder" = "加载图像以开始对比。";
+
+"pane.state.empty" = "空";
+"pane.state.loading" = "加载中";
+"pane.state.ready" = "就绪";
+"pane.title" = "面板 %d";
+"pane.drop_or_load" = "将文件拖到这里，或在此面板中加载文件。";
+"pane.empty_description" = "加载标准图像或 RAW 文件以开始对比。";
+"pane.load_image" = "加载图像";
+
+"common.unknown" = "未知";
+"common.not_available" = "无";
+"common.reset" = "重置";
+"common.done" = "完成";
+
+"layout.title" = "%d 画面";
+
+"status.open_images" = "打开图像以比较 2、3、4 或 6 个面板。";
+"open_panel.message" = "选择要比较的标准图像或 RAW 文件。";
+"status.no_loadable_files" = "未选择可加载的文件。";
+"status.loaded_first_n_files" = "已为当前 %2$d 面板布局加载前 %1$d 个文件。";
+"status.no_visible_region" = "当前没有可用于高亮的可见区域。";
+"status.captured_region" = "已从 %@ 捕获同步高亮区域。";
+"status.cleared_region" = "已清除同步高亮区域。";
+"status.loading_file" = "正在加载 %@...";
+"status.loaded_preview" = "已加载 %@，使用预览处理管线。";
+"status.loaded_file" = "已加载 %@。";

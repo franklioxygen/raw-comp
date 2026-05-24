@@ -2,6 +2,7 @@ import SwiftUI
 
 struct WorkspaceToolbar: View {
     @ObservedObject var store: WorkspaceStore
+    let onOpenAdvancedSettings: () -> Void
 
     var body: some View {
         HStack(spacing: 12) {
@@ -10,7 +11,7 @@ struct WorkspaceToolbar: View {
             }) {
                 toolbarStandaloneIcon("folder")
             }
-            .help("Open images")
+            .help(L10n.string("toolbar.open_images"))
             .keyboardShortcut("o", modifiers: .command)
             .buttonStyle(.plain)
 
@@ -42,7 +43,7 @@ struct WorkspaceToolbar: View {
             Button(action: toggleLinkMode) {
                 linkModeIcon
             }
-            .help(store.linkMode == .synced ? "Linked panes are synced" : "Panes move independently")
+            .help(store.linkMode == .synced ? L10n.string("toolbar.linked") : L10n.string("toolbar.unlinked"))
             .buttonStyle(.plain)
 
             Button(action: toggleHighlightRegion) {
@@ -53,7 +54,7 @@ struct WorkspaceToolbar: View {
             }
             .disabled(store.activePane?.loadedImage == nil && store.highlightRect == nil)
             .opacity(store.activePane?.loadedImage == nil && store.highlightRect == nil ? 0.45 : 1)
-            .help(store.highlightRect == nil ? "Mark synchronized region" : "Remove synchronized region")
+            .help(store.highlightRect == nil ? L10n.string("toolbar.mark_region") : L10n.string("toolbar.remove_region"))
             .buttonStyle(.plain)
 
             Button(action: {
@@ -61,7 +62,7 @@ struct WorkspaceToolbar: View {
             }) {
                 toolbarStandaloneIcon("info.circle", isActive: store.showExifOverlay)
             }
-            .help(store.showExifOverlay ? "Hide EXIF overlay" : "Show EXIF overlay")
+            .help(store.showExifOverlay ? L10n.string("toolbar.hide_exif") : L10n.string("toolbar.show_exif"))
             .buttonStyle(.plain)
 
             Button(action: {
@@ -69,7 +70,7 @@ struct WorkspaceToolbar: View {
             }) {
                 toolbarStandaloneIcon("rectangle.tophalf.inset.filled", isActive: store.showTopInfoBar)
             }
-            .help(store.showTopInfoBar ? "Hide top info bar" : "Show top info bar")
+            .help(store.showTopInfoBar ? L10n.string("toolbar.hide_top_bar") : L10n.string("toolbar.show_top_bar"))
             .buttonStyle(.plain)
 
             Divider()
@@ -79,13 +80,13 @@ struct WorkspaceToolbar: View {
                 Button(action: store.zoomOut) {
                     toolbarIcon("minus.magnifyingglass")
                 }
-                .help("Zoom out")
+                .help(L10n.string("toolbar.zoom_out"))
                 .buttonStyle(.plain)
 
                 Button(action: store.zoomIn) {
                     toolbarIcon("plus.magnifyingglass")
                 }
-                .help("Zoom in")
+                .help(L10n.string("toolbar.zoom_in"))
                 .buttonStyle(.plain)
             }
 
@@ -93,7 +94,7 @@ struct WorkspaceToolbar: View {
                 Button(action: store.fitToWindow) {
                     toolbarIcon("arrow.up.left.and.arrow.down.right")
                 }
-                .help("Fit to window")
+                .help(L10n.string("toolbar.fit_to_window"))
                 .buttonStyle(.plain)
 
                 Button(action: store.actualPixels) {
@@ -101,7 +102,7 @@ struct WorkspaceToolbar: View {
                         ActualPixelsGlyph()
                     }
                 }
-                .help("Actual pixels")
+                .help(L10n.string("toolbar.actual_pixels"))
                 .buttonStyle(.plain)
             }
 
@@ -109,24 +110,30 @@ struct WorkspaceToolbar: View {
                 Button(action: store.rotateLeft) {
                     toolbarIcon("rotate.left")
                 }
-                .help("Rotate left")
+                .help(L10n.string("toolbar.rotate_left"))
                 .buttonStyle(.plain)
 
                 Button(action: store.rotateRight) {
                     toolbarIcon("rotate.right")
                 }
-                .help("Rotate right")
+                .help(L10n.string("toolbar.rotate_right"))
                 .buttonStyle(.plain)
             }
 
             Spacer()
+
+            Button(action: onOpenAdvancedSettings) {
+                toolbarStandaloneIcon("gearshape")
+            }
+            .help(L10n.string("toolbar.advanced_settings"))
+            .buttonStyle(.plain)
 
             Button(action: {
                 store.showInspector.toggle()
             }) {
                 toolbarStandaloneIcon("sidebar.right", isActive: store.showInspector)
             }
-            .help(store.showInspector ? "Hide inspector" : "Show inspector")
+            .help(store.showInspector ? L10n.string("toolbar.hide_inspector") : L10n.string("toolbar.show_inspector"))
             .buttonStyle(.plain)
         }
         .padding(.horizontal, 16)

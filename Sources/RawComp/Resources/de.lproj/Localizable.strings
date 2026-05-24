@@ -1,0 +1,126 @@
+"inspector.title" = "Inspektor";
+"inspector.file" = "Datei";
+"inspector.type" = "Typ";
+"inspector.size" = "Größe";
+"inspector.disk" = "Speicher";
+"inspector.color" = "Farbe";
+"inspector.profile" = "Profil";
+"inspector.pipeline" = "Pipeline";
+"inspector.pipeline.raw_preview" = "RAW / Vorschau";
+"inspector.pipeline.standard" = "Standard";
+"inspector.zoom" = "Zoom";
+"inspector.rotation" = "Drehung";
+"inspector.exif" = "EXIF";
+"inspector.empty" = "Wählen Sie ein Feld mit einem Bild aus, um Dateidetails und den Ansichtsstatus anzuzeigen.";
+
+"adjustments.title" = "Vergleichsanpassungen";
+"adjustments.subtitle" = "Auf jedes geladene Bildfeld angewendet.";
+"adjustments.exposure" = "Belichtung";
+"adjustments.brightness" = "Helligkeit";
+"adjustments.contrast" = "Kontrast";
+"adjustments.saturation" = "Sättigung";
+"adjustments.detail" = "Details";
+"adjustments.status.neutral" = "Neutral";
+"adjustments.status.active" = "Aktiv";
+
+"settings.title" = "Erweiterte Einstellungen";
+"settings.appearance" = "Darstellung";
+"settings.language" = "Sprache";
+"settings.autoupdate" = "Automatische Update-Prüfung aktivieren";
+"settings.manual_update" = "Manuelles Update";
+"settings.check_updates" = "Nach Updates suchen…";
+"settings.footer.available" = "Änderungen an Thema und Sprache werden sofort angewendet. Die Sprachauswahl wird verwendet, wenn lokalisierte Ressourcen verfügbar sind.";
+"settings.footer.unavailable" = "Update-Steuerelemente sind nicht verfügbar, weil Sparkle für diesen Build nicht konfiguriert ist.";
+"settings.theme.system" = "System";
+"settings.theme.light" = "Hell";
+"settings.theme.dark" = "Dunkel";
+"settings.language.system" = "System";
+"settings.language.english" = "Englisch";
+"settings.language.chinese" = "Chinesisch";
+"settings.language.french" = "Französisch";
+"settings.language.german" = "Deutsch";
+"settings.language.italian" = "Italienisch";
+"settings.language.japanese" = "Japanisch";
+"settings.language.korean" = "Koreanisch";
+"settings.language.portuguese" = "Portugiesisch";
+"settings.language.spanish" = "Spanisch";
+
+"toolbar.open_images" = "Bilder öffnen";
+"toolbar.linked" = "Verknüpfte Bereiche sind synchronisiert";
+"toolbar.unlinked" = "Bereiche bewegen sich unabhängig";
+"toolbar.mark_region" = "Synchronisierten Bereich markieren";
+"toolbar.remove_region" = "Synchronisierten Bereich entfernen";
+"toolbar.hide_exif" = "EXIF-Overlay ausblenden";
+"toolbar.show_exif" = "EXIF-Overlay anzeigen";
+"toolbar.hide_top_bar" = "Obere Infoleiste ausblenden";
+"toolbar.show_top_bar" = "Obere Infoleiste anzeigen";
+"toolbar.zoom_out" = "Verkleinern";
+"toolbar.zoom_in" = "Vergrößern";
+"toolbar.fit_to_window" = "An Fenster anpassen";
+"toolbar.actual_pixels" = "Tatsächliche Pixel";
+"toolbar.rotate_left" = "Nach links drehen";
+"toolbar.rotate_right" = "Nach rechts drehen";
+"toolbar.advanced_settings" = "Erweiterte Einstellungen";
+"toolbar.hide_inspector" = "Inspektor ausblenden";
+"toolbar.show_inspector" = "Inspektor anzeigen";
+
+"error.unreadable_file" = "%@ konnte nicht gelesen werden.";
+"error.no_decoder" = "Kein verfügbarer Decoder konnte %@ öffnen.";
+"error.quicklook_failed" = "Quick Look konnte keine Vorschau für %@ erzeugen.";
+
+"exif.camera_make" = "Kameramarke";
+"exif.camera_model" = "Kameramodell";
+"exif.lens" = "Objektiv";
+"exif.date_original" = "Aufnahmedatum";
+"exif.exposure" = "Belichtung";
+"exif.aperture" = "Blende";
+"exif.iso" = "ISO";
+"exif.focal_length" = "Brennweite";
+"exif.exposure_bias" = "Belichtungskorrektur";
+"exif.metering" = "Messung";
+"exif.white_balance" = "Weißabgleich";
+"exif.flash" = "Blitz";
+"exif.software" = "Software";
+"exif.artist" = "Urheber";
+"exif.gps_latitude" = "GPS-Breite";
+"exif.gps_longitude" = "GPS-Länge";
+
+"format.ev" = "%.2f EV";
+"format.percent" = "%d%%";
+"format.degrees" = "%d Grad";
+"format.aperture" = "f/%@";
+"format.focal_length" = "%@ mm";
+"format.bias_ev" = "%@ EV";
+"format.deg" = "%@ Grad";
+"format.zero_seconds" = "0 s";
+"format.fraction_seconds" = "1/%d s";
+"format.seconds" = "%@ s";
+"format.iso" = "ISO %@";
+
+"canvas.placeholder" = "Laden Sie ein Bild, um den Vergleich zu beginnen.";
+
+"pane.state.empty" = "Leer";
+"pane.state.loading" = "Lädt";
+"pane.state.ready" = "Bereit";
+"pane.title" = "Bereich %d";
+"pane.drop_or_load" = "Datei hier ablegen oder in diesen Bereich laden.";
+"pane.empty_description" = "Laden Sie ein Standardbild oder eine RAW-Datei, um den Vergleich zu beginnen.";
+"pane.load_image" = "Bild laden";
+
+"common.unknown" = "Unbekannt";
+"common.not_available" = "k. A.";
+"common.reset" = "Zurücksetzen";
+"common.done" = "Fertig";
+
+"layout.title" = "%d-fach";
+
+"status.open_images" = "Öffnen Sie Bilder, um 2, 3, 4 oder 6 Bereiche zu vergleichen.";
+"open_panel.message" = "Wählen Sie Standardbilder oder RAW-Dateien zum Vergleichen aus.";
+"status.no_loadable_files" = "Es wurden keine ladbaren Dateien ausgewählt.";
+"status.loaded_first_n_files" = "Die ersten %1$d Dateien wurden für das aktuelle Layout mit %2$d Bereichen geladen.";
+"status.no_visible_region" = "Es ist noch kein sichtbarer Bereich zum Hervorheben verfügbar.";
+"status.captured_region" = "Synchronisierten Hervorhebungsbereich aus %@ erfasst.";
+"status.cleared_region" = "Synchronisierter Hervorhebungsbereich wurde entfernt.";
+"status.loading_file" = "%@ wird geladen...";
+"status.loaded_preview" = "%@ wurde mit einer Vorschau-Pipeline geladen.";
+"status.loaded_file" = "%@ wurde geladen.";

@@ -11,11 +11,11 @@ enum ImageLoadError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case let .unreadable(url):
-            "Could not read \(url.lastPathComponent)."
+            L10n.string("error.unreadable_file", url.lastPathComponent)
         case let .noDecoder(url):
-            "No available decoder could open \(url.lastPathComponent)."
+            L10n.string("error.no_decoder", url.lastPathComponent)
         case let .quickLookFailed(url):
-            "Quick Look could not generate a preview for \(url.lastPathComponent)."
+            L10n.string("error.quicklook_failed", url.lastPathComponent)
         }
     }
 }
@@ -151,30 +151,30 @@ actor ImageLoader {
         let gps = properties[kCGImagePropertyGPSDictionary] as? [CFString: Any] ?? [:]
 
         let candidates: [(String, String, Any?)] = [
-            ("camera_make", "Camera Make", tiff[kCGImagePropertyTIFFMake]),
-            ("camera_model", "Camera Model", tiff[kCGImagePropertyTIFFModel]),
-            ("lens_model", "Lens", exif[kCGImagePropertyExifLensModel]),
-            ("date_original", "Date Original", exif[kCGImagePropertyExifDateTimeOriginal] ?? tiff[kCGImagePropertyTIFFDateTime]),
-            ("exposure_time", "Exposure", exif[kCGImagePropertyExifExposureTime]),
-            ("f_number", "Aperture", exif[kCGImagePropertyExifFNumber]),
-            ("iso", "ISO", exif[kCGImagePropertyExifISOSpeedRatings]),
-            ("focal_length", "Focal Length", exif[kCGImagePropertyExifFocalLength]),
-            ("exposure_bias", "Exposure Bias", exif[kCGImagePropertyExifExposureBiasValue]),
-            ("metering_mode", "Metering", exif[kCGImagePropertyExifMeteringMode]),
-            ("white_balance", "White Balance", exif[kCGImagePropertyExifWhiteBalance]),
-            ("flash", "Flash", exif[kCGImagePropertyExifFlash]),
-            ("software", "Software", tiff[kCGImagePropertyTIFFSoftware]),
-            ("artist", "Artist", tiff[kCGImagePropertyTIFFArtist]),
-            ("gps_latitude", "GPS Latitude", gps[kCGImagePropertyGPSLatitude]),
-            ("gps_longitude", "GPS Longitude", gps[kCGImagePropertyGPSLongitude])
+            ("camera_make", "exif.camera_make", tiff[kCGImagePropertyTIFFMake]),
+            ("camera_model", "exif.camera_model", tiff[kCGImagePropertyTIFFModel]),
+            ("lens_model", "exif.lens", exif[kCGImagePropertyExifLensModel]),
+            ("date_original", "exif.date_original", exif[kCGImagePropertyExifDateTimeOriginal] ?? tiff[kCGImagePropertyTIFFDateTime]),
+            ("exposure_time", "exif.exposure", exif[kCGImagePropertyExifExposureTime]),
+            ("f_number", "exif.aperture", exif[kCGImagePropertyExifFNumber]),
+            ("iso", "exif.iso", exif[kCGImagePropertyExifISOSpeedRatings]),
+            ("focal_length", "exif.focal_length", exif[kCGImagePropertyExifFocalLength]),
+            ("exposure_bias", "exif.exposure_bias", exif[kCGImagePropertyExifExposureBiasValue]),
+            ("metering_mode", "exif.metering", exif[kCGImagePropertyExifMeteringMode]),
+            ("white_balance", "exif.white_balance", exif[kCGImagePropertyExifWhiteBalance]),
+            ("flash", "exif.flash", exif[kCGImagePropertyExifFlash]),
+            ("software", "exif.software", tiff[kCGImagePropertyTIFFSoftware]),
+            ("artist", "exif.artist", tiff[kCGImagePropertyTIFFArtist]),
+            ("gps_latitude", "exif.gps_latitude", gps[kCGImagePropertyGPSLatitude]),
+            ("gps_longitude", "exif.gps_longitude", gps[kCGImagePropertyGPSLongitude])
         ]
 
-        return candidates.compactMap { id, label, value in
+        return candidates.compactMap { id, labelKey, value in
             guard let text = formatMetadataValue(value, id: id), !text.isEmpty else {
                 return nil
             }
 
-            return ImageMetadataField(id: id, label: label, value: text)
+            return ImageMetadataField(id: id, labelKey: labelKey, value: text)
         }
     }
 
@@ -197,13 +197,13 @@ actor ImageLoader {
         case "exposure_time":
             return formatExposureTime(value)
         case "f_number":
-            return "f/\(formatDecimal(value, maxFractionDigits: 1))"
+            return L10n.string("format.aperture", formatDecimal(value, maxFractionDigits: 1))
         case "focal_length":
-            return "\(formatDecimal(value, maxFractionDigits: 1)) mm"
+            return L10n.string("format.focal_length", formatDecimal(value, maxFractionDigits: 1))
         case "exposure_bias":
-            return "\(formatSignedDecimal(value, maxFractionDigits: 2)) EV"
+            return L10n.string("format.bias_ev", formatSignedDecimal(value, maxFractionDigits: 2))
         case "gps_latitude", "gps_longitude":
-            return "\(formatDecimal(value, maxFractionDigits: 6)) deg"
+            return L10n.string("format.deg", formatDecimal(value, maxFractionDigits: 6))
         default:
             break
         }
@@ -217,15 +217,15 @@ actor ImageLoader {
 
     private func formatExposureTime(_ seconds: Double) -> String {
         guard seconds > 0 else {
-            return "0 s"
+            return L10n.string("format.zero_seconds")
         }
 
         if seconds < 1 {
             let denominator = Int((1 / seconds).rounded())
-            return "1/\(denominator) s"
+            return L10n.string("format.fraction_seconds", denominator)
         }
 
-        return "\(formatDecimal(seconds, maxFractionDigits: 1)) s"
+        return L10n.string("format.seconds", formatDecimal(seconds, maxFractionDigits: 1))
     }
 
     private func formatDecimal(_ value: Double, maxFractionDigits: Int) -> String {

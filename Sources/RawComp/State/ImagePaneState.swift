@@ -10,11 +10,11 @@ enum PaneLoadState: Equatable {
     var label: String {
         switch self {
         case .empty:
-            "Empty"
+            L10n.string("pane.state.empty")
         case .loading:
-            "Loading"
+            L10n.string("pane.state.loading")
         case .ready:
-            "Ready"
+            L10n.string("pane.state.ready")
         case let .failed(message):
             message
         }
@@ -39,6 +39,6 @@ final class ImagePaneState: ObservableObject, Identifiable {
     }
 
     var title: String {
-        loadedImage?.metadata.fileName ?? "Pane \(slot + 1)"
+        loadedImage?.metadata.fileName ?? L10n.string("pane.title", slot + 1)
     }
 }

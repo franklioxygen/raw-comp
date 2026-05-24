@@ -3,7 +3,7 @@ import SwiftUI
 
 @main
 struct RawCompApp: App {
-    @StateObject private var updaterViewModel: CheckForUpdatesViewModel
+    @StateObject private var settingsController: AppSettingsController
     private let updaterController: SPUStandardUpdaterController?
 
     init() {
@@ -11,7 +11,7 @@ struct RawCompApp: App {
             ? SPUStandardUpdaterController(startingUpdater: true, updaterDelegate: nil, userDriverDelegate: nil)
             : nil
         self.updaterController = updaterController
-        _updaterViewModel = StateObject(wrappedValue: CheckForUpdatesViewModel(updater: updaterController?.updater))
+        _settingsController = StateObject(wrappedValue: AppSettingsController(updater: updaterController?.updater))
 
         Task { @MainActor in
             AppIconController.applyBundledIcon()
@@ -20,14 +20,17 @@ struct RawCompApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(settingsController: settingsController)
                 .frame(minWidth: 1200, minHeight: 760)
+                .preferredColorScheme(settingsController.colorScheme)
+                .environment(\.locale, settingsController.locale)
         }
         .windowResizability(.contentMinSize)
         .commands {
             CommandGroup(after: .appInfo) {
-                if let updater = updaterController?.updater {
-                    CheckForUpdatesView(updater: updater, viewModel: updaterViewModel)
+                if settingsController.canManageAutoUpdate {
+                    Button(L10n.string("settings.check_updates"), action: settingsController.checkForUpdates)
+                        .disabled(!settingsController.canCheckForUpdates)
                 }
             }
         }
@@ -46,29 +49,5 @@ private enum SparkleConfiguration {
 
         return !feedURL.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
             !publicKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-    }
-}
-
-@MainActor
-private final class CheckForUpdatesViewModel: ObservableObject {
-    @Published var canCheckForUpdates = false
-
-    init(updater: SPUUpdater?) {
-        guard let updater else {
-            return
-        }
-
-        updater.publisher(for: \.canCheckForUpdates)
-            .assign(to: &$canCheckForUpdates)
-    }
-}
-
-private struct CheckForUpdatesView: View {
-    let updater: SPUUpdater
-    @ObservedObject var viewModel: CheckForUpdatesViewModel
-
-    var body: some View {
-        Button("Check for Updates…", action: updater.checkForUpdates)
-            .disabled(!viewModel.canCheckForUpdates)
     }
 }

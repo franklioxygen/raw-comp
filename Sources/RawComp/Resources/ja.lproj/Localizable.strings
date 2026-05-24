@@ -1,0 +1,126 @@
+"inspector.title" = "インスペクタ";
+"inspector.file" = "ファイル";
+"inspector.type" = "タイプ";
+"inspector.size" = "サイズ";
+"inspector.disk" = "ディスク";
+"inspector.color" = "カラー";
+"inspector.profile" = "プロファイル";
+"inspector.pipeline" = "パイプライン";
+"inspector.pipeline.raw_preview" = "RAW / プレビュー";
+"inspector.pipeline.standard" = "標準";
+"inspector.zoom" = "ズーム";
+"inspector.rotation" = "回転";
+"inspector.exif" = "EXIF";
+"inspector.empty" = "画像のあるペインを選択すると、ファイル詳細とビューポート状態を確認できます。";
+
+"adjustments.title" = "比較調整";
+"adjustments.subtitle" = "読み込まれたすべての画像ペインに適用されます。";
+"adjustments.exposure" = "露出";
+"adjustments.brightness" = "明るさ";
+"adjustments.contrast" = "コントラスト";
+"adjustments.saturation" = "彩度";
+"adjustments.detail" = "ディテール";
+"adjustments.status.neutral" = "標準";
+"adjustments.status.active" = "有効";
+
+"settings.title" = "詳細設定";
+"settings.appearance" = "外観";
+"settings.language" = "言語";
+"settings.autoupdate" = "自動更新チェックを有効にする";
+"settings.manual_update" = "手動更新";
+"settings.check_updates" = "アップデートを確認…";
+"settings.footer.available" = "テーマと言語の変更はすぐに反映されます。ローカライズ済みリソースがある場合は、その言語設定が使用されます。";
+"settings.footer.unavailable" = "このビルドでは Sparkle が設定されていないため、更新操作は利用できません。";
+"settings.theme.system" = "システム";
+"settings.theme.light" = "ライト";
+"settings.theme.dark" = "ダーク";
+"settings.language.system" = "システム";
+"settings.language.english" = "英語";
+"settings.language.chinese" = "中国語";
+"settings.language.french" = "フランス語";
+"settings.language.german" = "ドイツ語";
+"settings.language.italian" = "イタリア語";
+"settings.language.japanese" = "日本語";
+"settings.language.korean" = "韓国語";
+"settings.language.portuguese" = "ポルトガル語";
+"settings.language.spanish" = "スペイン語";
+
+"toolbar.open_images" = "画像を開く";
+"toolbar.linked" = "リンクされたペインは同期されています";
+"toolbar.unlinked" = "ペインは個別に移動します";
+"toolbar.mark_region" = "同期領域をマーク";
+"toolbar.remove_region" = "同期領域を削除";
+"toolbar.hide_exif" = "EXIF オーバーレイを隠す";
+"toolbar.show_exif" = "EXIF オーバーレイを表示";
+"toolbar.hide_top_bar" = "上部情報バーを隠す";
+"toolbar.show_top_bar" = "上部情報バーを表示";
+"toolbar.zoom_out" = "ズームアウト";
+"toolbar.zoom_in" = "ズームイン";
+"toolbar.fit_to_window" = "ウインドウに合わせる";
+"toolbar.actual_pixels" = "実ピクセル";
+"toolbar.rotate_left" = "左に回転";
+"toolbar.rotate_right" = "右に回転";
+"toolbar.advanced_settings" = "詳細設定";
+"toolbar.hide_inspector" = "インスペクタを隠す";
+"toolbar.show_inspector" = "インスペクタを表示";
+
+"error.unreadable_file" = "%@ を読み込めませんでした。";
+"error.no_decoder" = "%@ を開けるデコーダがありません。";
+"error.quicklook_failed" = "Quick Look は %@ のプレビューを生成できませんでした。";
+
+"exif.camera_make" = "カメラメーカー";
+"exif.camera_model" = "カメラモデル";
+"exif.lens" = "レンズ";
+"exif.date_original" = "撮影日時";
+"exif.exposure" = "露出";
+"exif.aperture" = "絞り";
+"exif.iso" = "ISO";
+"exif.focal_length" = "焦点距離";
+"exif.exposure_bias" = "露出補正";
+"exif.metering" = "測光";
+"exif.white_balance" = "ホワイトバランス";
+"exif.flash" = "フラッシュ";
+"exif.software" = "ソフトウェア";
+"exif.artist" = "作成者";
+"exif.gps_latitude" = "GPS 緯度";
+"exif.gps_longitude" = "GPS 経度";
+
+"format.ev" = "%.2f EV";
+"format.percent" = "%d%%";
+"format.degrees" = "%d 度";
+"format.aperture" = "f/%@";
+"format.focal_length" = "%@ mm";
+"format.bias_ev" = "%@ EV";
+"format.deg" = "%@ 度";
+"format.zero_seconds" = "0 秒";
+"format.fraction_seconds" = "1/%d 秒";
+"format.seconds" = "%@ 秒";
+"format.iso" = "ISO %@";
+
+"canvas.placeholder" = "比較を開始するには画像を読み込んでください。";
+
+"pane.state.empty" = "空";
+"pane.state.loading" = "読み込み中";
+"pane.state.ready" = "準備完了";
+"pane.title" = "ペイン %d";
+"pane.drop_or_load" = "ファイルをドロップするか、このペインに読み込んでください。";
+"pane.empty_description" = "標準画像または RAW ファイルを読み込んで比較を開始します。";
+"pane.load_image" = "画像を読み込む";
+
+"common.unknown" = "不明";
+"common.not_available" = "該当なし";
+"common.reset" = "リセット";
+"common.done" = "完了";
+
+"layout.title" = "%d 分割";
+
+"status.open_images" = "画像を開いて 2、3、4、6 ペインを比較します。";
+"open_panel.message" = "比較する標準画像または RAW ファイルを選択してください。";
+"status.no_loadable_files" = "読み込めるファイルが選択されていません。";
+"status.loaded_first_n_files" = "現在の %2$d ペインレイアウトに最初の %1$d ファイルを読み込みました。";
+"status.no_visible_region" = "まだハイライト可能な表示領域がありません。";
+"status.captured_region" = "%@ から同期ハイライト領域を取得しました。";
+"status.cleared_region" = "同期ハイライト領域をクリアしました。";
+"status.loading_file" = "%@ を読み込み中...";
+"status.loaded_preview" = "%@ をプレビューパイプラインで読み込みました。";
+"status.loaded_file" = "%@ を読み込みました。";

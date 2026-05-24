@@ -4,7 +4,7 @@ import Foundation
 
 struct ImageMetadataField: Identifiable, Sendable {
     let id: String
-    let label: String
+    let labelKey: String
     let value: String
 }
 
@@ -25,7 +25,7 @@ struct ImageMetadata: Sendable {
 
     var fileSizeText: String {
         guard let fileSizeBytes else {
-            return "Unknown"
+            return L10n.string("common.unknown")
         }
 
         return ByteCountFormatter.string(fromByteCount: fileSizeBytes, countStyle: .file)
@@ -35,7 +35,7 @@ struct ImageMetadata: Sendable {
         let lookup = Dictionary(uniqueKeysWithValues: exifFields.map { ($0.id, $0.value) })
         let values = [
             lookup["f_number"],
-            lookup["iso"].map { "ISO \($0)" },
+            lookup["iso"].map { L10n.string("format.iso", $0) },
             lookup["exposure_time"],
             lookup["focal_length"],
             lookup["exposure_bias"]

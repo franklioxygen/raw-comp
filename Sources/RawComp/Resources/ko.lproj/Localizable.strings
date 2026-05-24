@@ -1,0 +1,126 @@
+"inspector.title" = "검사기";
+"inspector.file" = "파일";
+"inspector.type" = "유형";
+"inspector.size" = "크기";
+"inspector.disk" = "디스크";
+"inspector.color" = "색상";
+"inspector.profile" = "프로필";
+"inspector.pipeline" = "파이프라인";
+"inspector.pipeline.raw_preview" = "RAW / 미리보기";
+"inspector.pipeline.standard" = "표준";
+"inspector.zoom" = "확대";
+"inspector.rotation" = "회전";
+"inspector.exif" = "EXIF";
+"inspector.empty" = "이미지가 있는 창을 선택하면 파일 세부 정보와 뷰포트 상태를 확인할 수 있습니다.";
+
+"adjustments.title" = "비교 조정";
+"adjustments.subtitle" = "불러온 모든 이미지 창에 적용됩니다.";
+"adjustments.exposure" = "노출";
+"adjustments.brightness" = "밝기";
+"adjustments.contrast" = "대비";
+"adjustments.saturation" = "채도";
+"adjustments.detail" = "디테일";
+"adjustments.status.neutral" = "기본값";
+"adjustments.status.active" = "활성";
+
+"settings.title" = "고급 설정";
+"settings.appearance" = "모양";
+"settings.language" = "언어";
+"settings.autoupdate" = "자동 업데이트 확인 사용";
+"settings.manual_update" = "수동 업데이트";
+"settings.check_updates" = "업데이트 확인…";
+"settings.footer.available" = "테마와 언어 변경은 즉시 적용됩니다. 현지화 리소스가 있으면 선택한 언어가 사용됩니다.";
+"settings.footer.unavailable" = "이 빌드에서는 Sparkle이 구성되지 않아 업데이트 제어를 사용할 수 없습니다.";
+"settings.theme.system" = "시스템";
+"settings.theme.light" = "라이트";
+"settings.theme.dark" = "다크";
+"settings.language.system" = "시스템";
+"settings.language.english" = "영어";
+"settings.language.chinese" = "중국어";
+"settings.language.french" = "프랑스어";
+"settings.language.german" = "독일어";
+"settings.language.italian" = "이탈리아어";
+"settings.language.japanese" = "일본어";
+"settings.language.korean" = "한국어";
+"settings.language.portuguese" = "포르투갈어";
+"settings.language.spanish" = "스페인어";
+
+"toolbar.open_images" = "이미지 열기";
+"toolbar.linked" = "연결된 창이 동기화되었습니다";
+"toolbar.unlinked" = "창이 독립적으로 이동합니다";
+"toolbar.mark_region" = "동기화 영역 표시";
+"toolbar.remove_region" = "동기화 영역 제거";
+"toolbar.hide_exif" = "EXIF 오버레이 숨기기";
+"toolbar.show_exif" = "EXIF 오버레이 표시";
+"toolbar.hide_top_bar" = "상단 정보 막대 숨기기";
+"toolbar.show_top_bar" = "상단 정보 막대 표시";
+"toolbar.zoom_out" = "축소";
+"toolbar.zoom_in" = "확대";
+"toolbar.fit_to_window" = "창에 맞추기";
+"toolbar.actual_pixels" = "실제 픽셀";
+"toolbar.rotate_left" = "왼쪽으로 회전";
+"toolbar.rotate_right" = "오른쪽으로 회전";
+"toolbar.advanced_settings" = "고급 설정";
+"toolbar.hide_inspector" = "검사기 숨기기";
+"toolbar.show_inspector" = "검사기 표시";
+
+"error.unreadable_file" = "%@ 파일을 읽을 수 없습니다.";
+"error.no_decoder" = "%@ 파일을 열 수 있는 디코더가 없습니다.";
+"error.quicklook_failed" = "Quick Look이 %@의 미리보기를 생성하지 못했습니다.";
+
+"exif.camera_make" = "카메라 제조사";
+"exif.camera_model" = "카메라 모델";
+"exif.lens" = "렌즈";
+"exif.date_original" = "촬영 날짜";
+"exif.exposure" = "노출";
+"exif.aperture" = "조리개";
+"exif.iso" = "ISO";
+"exif.focal_length" = "초점 거리";
+"exif.exposure_bias" = "노출 보정";
+"exif.metering" = "측광";
+"exif.white_balance" = "화이트 밸런스";
+"exif.flash" = "플래시";
+"exif.software" = "소프트웨어";
+"exif.artist" = "작성자";
+"exif.gps_latitude" = "GPS 위도";
+"exif.gps_longitude" = "GPS 경도";
+
+"format.ev" = "%.2f EV";
+"format.percent" = "%d%%";
+"format.degrees" = "%d도";
+"format.aperture" = "f/%@";
+"format.focal_length" = "%@ mm";
+"format.bias_ev" = "%@ EV";
+"format.deg" = "%@도";
+"format.zero_seconds" = "0초";
+"format.fraction_seconds" = "1/%d초";
+"format.seconds" = "%@초";
+"format.iso" = "ISO %@";
+
+"canvas.placeholder" = "비교를 시작하려면 이미지를 불러오세요.";
+
+"pane.state.empty" = "비어 있음";
+"pane.state.loading" = "불러오는 중";
+"pane.state.ready" = "준비됨";
+"pane.title" = "창 %d";
+"pane.drop_or_load" = "파일을 드롭하거나 이 창에 불러오세요.";
+"pane.empty_description" = "비교를 시작하려면 일반 이미지 또는 RAW 파일을 불러오세요.";
+"pane.load_image" = "이미지 불러오기";
+
+"common.unknown" = "알 수 없음";
+"common.not_available" = "해당 없음";
+"common.reset" = "재설정";
+"common.done" = "완료";
+
+"layout.title" = "%d분할";
+
+"status.open_images" = "이미지를 열어 2, 3, 4 또는 6개 창을 비교하세요.";
+"open_panel.message" = "비교할 일반 이미지 또는 RAW 파일을 선택하세요.";
+"status.no_loadable_files" = "불러올 수 있는 파일이 선택되지 않았습니다.";
+"status.loaded_first_n_files" = "현재 %2$d창 레이아웃에 처음 %1$d개 파일을 불러왔습니다.";
+"status.no_visible_region" = "아직 강조할 수 있는 보이는 영역이 없습니다.";
+"status.captured_region" = "%@에서 동기화 강조 영역을 캡처했습니다.";
+"status.cleared_region" = "동기화 강조 영역을 지웠습니다.";
+"status.loading_file" = "%@ 불러오는 중...";
+"status.loaded_preview" = "%@을(를) 미리보기 파이프라인으로 불러왔습니다.";
+"status.loaded_file" = "%@을(를) 불러왔습니다.";
