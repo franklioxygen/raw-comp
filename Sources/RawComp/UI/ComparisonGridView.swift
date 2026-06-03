@@ -1,30 +1,42 @@
 import SwiftUI
 
 struct ComparisonGridView: View {
-    @ObservedObject var store: WorkspaceStore
+    var store: WorkspaceStore
 
     private let paneSpacing: CGFloat = 0
 
     var body: some View {
         GeometryReader { proxy in
-            ScrollView {
-                LazyVGrid(
-                    columns: Array(
-                        repeating: GridItem(.flexible(minimum: 260), spacing: paneSpacing, alignment: .top),
-                        count: store.layout.columnCount
-                    ),
-                    alignment: .center,
-                    spacing: paneSpacing
-                ) {
-                    ForEach(store.visiblePanes) { pane in
-                        ImagePaneView(store: store, pane: pane)
-                            .frame(
-                                minHeight: idealPaneHeight(in: proxy.size, layout: store.layout)
-                            )
+            ZStack {
+                ScrollView {
+                    LazyVGrid(
+                        columns: Array(
+                            repeating: GridItem(.flexible(minimum: 260), spacing: paneSpacing, alignment: .top),
+                            count: store.layout.columnCount
+                        ),
+                        alignment: .center,
+                        spacing: paneSpacing
+                    ) {
+                        ForEach(store.visiblePanes) { pane in
+                            ImagePaneView(store: store, pane: pane)
+                                .frame(
+                                    minHeight: idealPaneHeight(in: proxy.size, layout: store.layout)
+                                )
+                        }
                     }
                 }
+                .background(Color(nsColor: .controlBackgroundColor))
+
+                if store.isWipeCompareActive {
+                    WipeDividerOverlay(store: store)
+                }
             }
-            .background(Color(nsColor: .controlBackgroundColor))
+            .onAppear {
+                store.updateComparisonCanvasSize(proxy.size)
+            }
+            .onChange(of: proxy.size) { _, newSize in
+                store.updateComparisonCanvasSize(newSize)
+            }
         }
     }
 

@@ -1,0 +1,4 @@
+runtimes:
+    - node@22.2.0
+    - java@17.0.10
+1

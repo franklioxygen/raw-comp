@@ -35,7 +35,7 @@ struct ImageMetadata: Sendable {
         let lookup = Dictionary(uniqueKeysWithValues: exifFields.map { ($0.id, $0.value) })
         let values = [
             lookup["f_number"],
-            lookup["iso"].map { L10n.string("format.iso", $0) },
+            lookup["iso"].map { "ISO \($0)" },
             lookup["exposure_time"],
             lookup["focal_length"],
             lookup["exposure_bias"]

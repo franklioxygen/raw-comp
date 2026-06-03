@@ -10,18 +10,229 @@
 "inspector.pipeline.standard" = "Standard";
 "inspector.zoom" = "Zoom";
 "inspector.rotation" = "Rotation";
+"inspector.geometry_rotate" = "Fine Rotate";
+"inspector.geometry_flip" = "Flip";
+"inspector.geometry_flip.horizontal" = "Horizontal";
+"inspector.geometry_flip.vertical" = "Vertical";
+"inspector.geometry_flip.both" = "Horizontal + Vertical";
+"inspector.compare_mode" = "Compare Mode";
+"inspector.crop_rect" = "Crop Region";
 "inspector.exif" = "EXIF";
 "inspector.empty" = "Select a pane with an image to inspect file details and viewport state.";
 
 "adjustments.title" = "Comparison Adjustments";
 "adjustments.subtitle" = "Applied to every loaded image pane.";
+"adjustments.bypass" = "Bypass All";
+"adjustments.bypass_hold_hint" = "Hold \\ to preview the original image.";
+"adjustments.reset_option_hint" = "Option-click Reset also restores section enable defaults.";
 "adjustments.exposure" = "Exposure";
 "adjustments.brightness" = "Brightness";
 "adjustments.contrast" = "Contrast";
+"adjustments.highlights" = "Highlights";
+"adjustments.shadows" = "Shadows";
+"adjustments.whites" = "Whites";
+"adjustments.blacks" = "Blacks";
+"adjustments.gamma" = "Gamma";
+"adjustments.clarity" = "Clarity";
+"adjustments.texture" = "Texture";
+"adjustments.sharpen_amount" = "Sharpen";
+"adjustments.sharpen_radius" = "Sharpen Radius";
+"adjustments.sharpen_detail" = "Sharpen Detail";
+"adjustments.sharpen_masking" = "Sharpen Masking";
+"adjustments.edge_map_preview" = "Edge Map Preview";
+"adjustments.fine_rotate" = "Fine Rotate";
+"adjustments.flip_horizontal" = "Flip Horizontal";
+"adjustments.flip_vertical" = "Flip Vertical";
+"adjustments.zoom_hint" = "Best judged at 100% zoom.";
+"adjustments.zoom_hint_action" = "Actual Pixels";
+"adjustments.temperature" = "Temperature";
+"adjustments.tint" = "Tint";
+"adjustments.vibrance" = "Vibrance";
 "adjustments.saturation" = "Saturation";
+"adjustments.hue_shift" = "Hue Shift";
+"adjustments.crop_overlay" = "Crop Overlay";
+"adjustments.flat_field" = "Flat Field";
+"adjustments.monochrome" = "Monochrome Compare";
 "adjustments.detail" = "Detail";
 "adjustments.status.neutral" = "Neutral";
 "adjustments.status.active" = "Active";
+"adjustments.status.bypassed" = "Bypassed";
+
+"inspector.badge.active" = "Active";
+"inspector.section.coming_soon" = "%@ controls arrive in a later phase.";
+"inspector.section.histogram" = "Histogram & Readout";
+"inspector.section.light" = "Light";
+"inspector.section.toneCurve" = "Tone Curve";
+"inspector.section.color" = "Color";
+"inspector.section.blackAndWhite" = "Black & White";
+"inspector.section.presence" = "Presence / Detail";
+"inspector.section.noise" = "Noise / Artifact";
+"inspector.section.optics" = "Optics";
+"inspector.section.geometry" = "Geometry";
+"inspector.section.compareMode" = "Compare Modes";
+"inspector.section.metadata" = "Metadata";
+
+"histogram.clip.highlight" = "Highlight Clip";
+"histogram.clip.shadow" = "Shadow Clip";
+"histogram.profile" = "Profile";
+"histogram.sample.label" = "Sample";
+"histogram.display.label" = "Histogram";
+"histogram.display.rgb" = "RGB";
+"histogram.display.luma" = "Luma";
+"histogram.readout.rgb" = "RGB";
+"histogram.readout.luma" = "Luma";
+"histogram.readout.position" = "Position";
+"histogram.readout.empty" = "Move over the active pane to sample pixels.";
+"histogram.sample.1x1" = "1×1";
+"histogram.sample.3x3" = "3×3";
+"histogram.sample.5x5" = "5×5";
+
+"compare.mode.label" = "Mode";
+"compare.mode.normal" = "Normal";
+"compare.mode.lumaOnly" = "Luma Only";
+"compare.mode.clippingOverlay" = "Clipping Overlay";
+"compare.mode.edgeMap" = "Edge Map";
+"compare.mode.noiseEmphasis" = "Noise Emphasis";
+"compare.mode.falseColor" = "False Color";
+"compare.mode.absoluteDifference" = "Absolute Difference";
+"compare.mode.deltaE" = "Delta E Heatmap";
+"compare.mode.blink" = "Blink";
+"compare.mode.wipe" = "Wipe";
+"compare.reference.0" = "Pane 1 (Reference)";
+"compare.reference.1" = "Pane 2 (Reference)";
+"compare.reference.label" = "Reference";
+"compare.wipe_position" = "Wipe Position";
+"compare.wipe_drag_hint" = "Drag the divider over the comparison grid, or use the slider.";
+"compare.analysis_gain" = "Gain";
+"compare.blink_interval" = "Blink Interval";
+
+"light.auto_tone" = "Auto Tone";
+
+"color_mixer.title" = "Color Mixer";
+"color_mixer.reset" = "Reset Mixer";
+"color_mixer.hue" = "Hue";
+"color_mixer.saturation" = "Sat";
+"color_mixer.luminance" = "Lum";
+"color_band.red" = "Red";
+"color_band.orange" = "Orange";
+"color_band.yellow" = "Yellow";
+"color_band.green" = "Green";
+"color_band.aqua" = "Aqua";
+"color_band.blue" = "Blue";
+"color_band.purple" = "Purple";
+"color_band.magenta" = "Magenta";
+
+"bw_mixer.title" = "Luminance Mixer";
+"bw_mixer.reset" = "Reset Mixer";
+
+"adjustments.luminance_nr" = "Luminance NR";
+"adjustments.luminance_detail" = "Luminance Detail";
+"adjustments.luminance_contrast" = "Luminance Contrast";
+"adjustments.color_nr" = "Color NR";
+"adjustments.color_detail" = "Color Detail";
+"adjustments.color_smoothness" = "Color Smoothness";
+"adjustments.defringe_purple" = "Defringe Purple";
+"adjustments.defringe_green" = "Defringe Green";
+"adjustments.noise_emphasis_preview" = "Noise Emphasis Preview";
+"adjustments.lens_profile" = "Lens Profile";
+"adjustments.distortion" = "Distortion";
+"adjustments.vignetting" = "Vignetting";
+"adjustments.chromatic_aberration" = "Chromatic Aberration";
+"optics.no_lens_profile" = "Lens profile controls require lens EXIF metadata.";
+"optics.lens_profile_estimate" = "Applies estimated barrel, vignette, and fringe reduction (manual sliders add on top).";
+"inspector.section.reset_option_hint" = "Option-click section Reset re-enables that section.";
+"optics.flat_field_note" = "Flat-field correction reserved for a future RAW workflow.";
+"optics.flat_field_raw" = "Divides by a blurred illumination estimate (stronger on RAW previews).";
+"optics.flat_field_standard" = "Mild flat-field flattening for sensor vignetting comparison.";
+
+"section.copy" = "Copy section";
+"section.paste" = "Paste section";
+
+"toolbar.save_session" = "Save session";
+"toolbar.open_session" = "Open session";
+"toolbar.export_comparison" = "Export comparison layout";
+"session.default_filename" = "Comparison.rawcomp";
+"session.save_panel_message" = "Save this comparison session.";
+"session.open_panel_message" = "Open a saved comparison session.";
+
+"toolbar.session_menu" = "Session: open, save, or recent files";
+"toolbar.clear_recent_sessions" = "Clear Recent Sessions";
+
+"geometry.crop_hint" = "Option-drag on the active pane to set a crop region.";
+"geometry.reset_crop" = "Reset Crop";
+
+"status.section_copied" = "Copied %@ settings.";
+"status.section_pasted" = "Pasted %@ settings.";
+"status.section_paste_failed" = "No section settings found on the clipboard.";
+"status.session_saved" = "Saved session to %@.";
+"status.session_save_failed" = "Could not save session: %@";
+"status.session_loaded" = "Loaded session from %@.";
+"status.session_load_failed" = "Could not load session: %@";
+"status.autosave_restored" = "Restored your last comparison adjustment settings.";
+"status.zoom_hint_noise_detail" = "Noise and detail tools are best judged at 100% zoom — use Actual Pixels in the toolbar.";
+"status.export_no_images" = "Load at least one image before exporting.";
+"status.export_saved" = "Exported comparison to %@.";
+"status.export_failed" = "Could not export the comparison layout.";
+"export.default_filename" = "Comparison.png";
+"export.save_panel_message" = "Export the current comparison grid as PNG or TIFF.";
+
+"histogram.readout.delta_e" = "Delta E";
+"histogram.readout.reference" = "Reference";
+"histogram.readout.active" = "Active";
+
+"color.reset_basic" = "Reset Basic";
+"color.auto_balance" = "Auto Balance";
+
+"toolbar.open_recent_session" = "Open Most Recent Session";
+
+"status.auto_balance_applied" = "Estimated white balance applied from the active pane.";
+"status.auto_balance_failed" = "Could not estimate white balance for the active pane.";
+"status.no_recent_session" = "No recent session file is available.";
+"status.opened_last_session" = "Opened last session: %@.";
+
+"settings.open_last_session" = "Open most recent session on launch";
+"settings.export_labels" = "Include pane labels in exported layouts";
+
+"status.auto_light_applied" = "Estimated exposure and gamma applied from the active pane.";
+"status.auto_light_failed" = "Could not estimate light settings for the active pane.";
+"status.workspace_snapshot_restored" = "Restored the last loaded comparison workspace.";
+"status.copy_path_success" = "Copied file path to the clipboard.";
+"status.copy_path_failed" = "No file path is available to copy.";
+
+"tone_curve.preset.label" = "Curve";
+"tone_curve.channel.label" = "Channel";
+"tone_curve.channel.master" = "Master";
+"tone_curve.channel.red" = "Red";
+"tone_curve.channel.green" = "Green";
+"tone_curve.channel.blue" = "Blue";
+"tone_curve.reset_master" = "Reset Master";
+"tone_curve.reset_rgb" = "Reset RGB";
+"tone_curve.preset.linear" = "Linear";
+"tone_curve.preset.softContrast" = "Soft Contrast";
+"tone_curve.preset.mediumContrast" = "Medium Contrast";
+"tone_curve.preset.strongContrast" = "Strong Contrast";
+"tone_curve.custom_active" = "Custom curve (drag handles)";
+
+"presets.copy" = "Copy";
+"presets.paste" = "Paste";
+"presets.save" = "Save Preset";
+"presets.load_label" = "Load Preset";
+"presets.default" = "Default";
+"presets.delete" = "Delete “%@”";
+"presets.name_placeholder" = "Preset name";
+
+"adjustments.aspect_lock" = "Aspect Lock";
+
+"inspector.path" = "Path";
+"inspector.copy_path" = "Copy";
+
+"status.preset_default_loaded" = "Loaded default comparison adjustments.";
+
+"status.adjustments_copied" = "Copied comparison adjustments.";
+"status.adjustments_pasted" = "Pasted comparison adjustments.";
+"status.adjustments_paste_failed" = "No comparison adjustments found on the clipboard.";
+"status.preset_saved" = "Saved preset “%@”.";
+"status.preset_loaded" = "Loaded preset “%@”.";
 
 "settings.title" = "Advanced Settings";
 "settings.appearance" = "Appearance";
