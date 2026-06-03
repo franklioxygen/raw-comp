@@ -1,5 +1,6 @@
-import Foundation
 import CoreGraphics
+import Foundation
+import Observation
 
 enum PaneLoadState: Equatable {
     case empty
@@ -21,15 +22,16 @@ enum PaneLoadState: Equatable {
     }
 }
 
+@Observable
 @MainActor
-final class ImagePaneState: ObservableObject, Identifiable {
+final class ImagePaneState: Identifiable {
     let id = UUID()
     let slot: Int
 
-    @Published var loadedImage: LoadedImage?
-    @Published var renderedCGImage: CGImage?
-    @Published var loadState: PaneLoadState = .empty
-    @Published var viewport = ViewportState()
+    var loadedImage: LoadedImage?
+    var renderedCGImage: CGImage?
+    var loadState: PaneLoadState = .empty
+    var viewport = ViewportState()
 
     var loadToken = UUID()
     var adjustmentRevision = 0

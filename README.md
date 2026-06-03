@@ -24,28 +24,34 @@ It is built for photographers, retouchers, and reviewers who need to inspect sub
 - Zoom, pan, rotate, fit-to-window, and jump to `100%`.
 - Link or unlink pane movement so all images move together or independently.
 - Mark a synchronized highlight region to call attention to matching detail areas.
-- Apply shared comparison adjustments across all loaded panes: exposure, brightness, contrast, saturation, and detail sharpening.
-- Inspect file metadata for the active pane.
+- Apply shared, non-destructive comparison adjustments across all loaded panes (Light, tone curve, color, B&W, presence, noise, optics, geometry).
+- Use professional compare modes: clipping overlay, edge map, false color, noise emphasis, absolute difference, Delta E, blink, and wipe (2-up).
+- Save and reopen `.rawcomp` comparison sessions; export the comparison grid as PNG or TIFF.
+- Inspect histogram, pixel readout, and file metadata for the active pane.
 
 ## Current Status
 
-RawComp is currently an early usable MVP.
+RawComp is a focused comparison tool in active development.
 
 What works well now:
 
-- multi-pane side-by-side viewing
-- linked viewport inspection
-- synchronized highlight region
-- shared image adjustments for making subtle differences easier to see
-- metadata inspection
+- Multi-pane side-by-side viewing (2 / 3 / 4 / 6)
+- Linked or free viewport inspection
+- Synchronized highlight region
+- Sectioned comparison inspector with bypass, presets, and autosave
+- Histogram, clipping indicators, and cursor readout
+- Compare modes including difference, wipe, and blink (2-up layout)
+- Session save/open and comparison export
+- Metadata inspection and 8 UI languages
 
-What is still in progress:
+What is still planned (see [product spec](documents/rawcomp-product-spec.md)):
 
-- deeper RAW decoding with LibRaw
-- folder browser / filmstrip workflow
-- session save and reopen
-- export
-- advanced comparison tools such as difference, wipe, and blink modes
+- Deeper RAW decoding with LibRaw
+- Folder browser / filmstrip workflow
+- Ratings and flags in sessions
+- Manufacturer lens profiles and calibrated flat-field workflows
+
+Adjustment-system details: [comparison-adjustments-dev-spec.md](documents/comparison-adjustments-dev-spec.md)
 
 ## Supported Formats
 
@@ -89,7 +95,8 @@ You can also open `Package.swift` in Xcode and run the app there.
 4. Switch between `Free` and `Synced` link mode depending on whether you want panes to move together.
 5. Use zoom, fit, `100%`, and rotate controls from the toolbar.
 6. Use `Mark Region` to capture the current visible area as a synchronized highlight region.
-7. Use the inspector sliders to adjust all loaded images together and make hard-to-see differences stand out.
+7. Expand inspector sections (Light, Color, Compare Modes, etc.) and drag sliders to amplify subtle differences.
+8. Save a `.rawcomp` session or export the grid from the toolbar when you need to share a layout.
 
 ## Why Shared Adjustments Matter
 
@@ -97,18 +104,23 @@ Some image differences are hard to notice in a neutral view, especially in shado
 
 The shared adjustment controls let you push every image in the same way, so the comparison stays fair while making those differences easier to spot.
 
-## Planned Direction
+## Development
 
-RawComp is intended to become a focused comparison tool rather than a full photo library or RAW editor.
+Verify the comparison-adjustments stack:
 
-Planned improvements include:
+```bash
+./scripts/verify_comparison_adjustments.sh
+```
 
-- stronger RAW decoding coverage
-- better highlight tools
-- folder and filmstrip browsing
-- saved sessions
-- comparison export
-- more technical inspection tools
+When debugging in Xcode, prefer launching as a real app bundle (avoids `CFBundleIdentifier` / window-tab console noise from bare `swift run` executables):
+
+```bash
+./scripts/run-debug-app.sh
+```
+
+Or set the Xcode scheme **Run** executable to `dist/RawComp-Debug.app`.
+
+RawComp remains a comparison tool, not a full photo library or destructive RAW editor.
 
 ## Product Spec
 

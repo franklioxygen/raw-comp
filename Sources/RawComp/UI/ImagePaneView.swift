@@ -2,8 +2,8 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 struct ImagePaneView: View {
-    @ObservedObject var store: WorkspaceStore
-    @ObservedObject var pane: ImagePaneState
+    var store: WorkspaceStore
+    var pane: ImagePaneState
 
     var body: some View {
         VStack(spacing: 0) {
@@ -11,11 +11,23 @@ struct ImagePaneView: View {
                 if let loadedImage = pane.loadedImage {
                     ImageCanvasView(
                         loadedImage: loadedImage,
-                        displayCGImage: pane.renderedCGImage ?? loadedImage.cgImage,
+                        displayCGImage: store.displayCGImage(for: pane) ?? loadedImage.cgImage,
                         viewport: pane.viewport,
                         highlightRect: store.highlightRect,
+                        showCropOverlay: store.showsCropOverlay(for: pane),
+                        cropRectNormalized: store.cropRectNormalized,
+                        allowsCropEditing: store.allowsCropEditing(for: pane),
+                        locksCropAspect: store.adjustments.geometry.aspectLock,
                         onViewportChange: { store.updateViewport(from: pane.id, viewport: $0) },
-                        onSelect: { store.selectPane(pane.id) }
+                        onSelect: { store.selectPane(pane.id) },
+                        onCropRectChange: { rect in
+                            store.setCropRectNormalized(rect)
+                        },
+                        onImageCursorMove: { point in
+                            Task { @MainActor in
+                                store.updatePixelReadout(normalizedPoint: point, from: pane.id)
+                            }
+                        }
                     )
                     .overlay(alignment: .bottomLeading) {
                         if store.showExifOverlay, let summary = loadedImage.metadata.basicExifSummary {

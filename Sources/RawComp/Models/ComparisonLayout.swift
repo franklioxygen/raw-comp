@@ -1,6 +1,6 @@
 import Foundation
 
-enum ComparisonLayout: Int, CaseIterable, Identifiable, Sendable {
+enum ComparisonLayout: Int, CaseIterable, Identifiable, Sendable, Codable {
     case two = 2
     case three = 3
     case four = 4
@@ -37,6 +37,19 @@ enum ComparisonLayout: Int, CaseIterable, Identifiable, Sendable {
             "square.grid.2x2"
         case .six:
             "square.grid.3x2"
+        }
+    }
+
+    var menuLabel: String {
+        switch self {
+        case .two:
+            "2 Panes"
+        case .three:
+            "3 Panes"
+        case .four:
+            "4 Panes"
+        case .six:
+            "6 Panes"
         }
     }
 }

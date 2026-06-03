@@ -1,12 +1,12 @@
 import CoreGraphics
 
-enum ZoomMode: String, Equatable, Sendable {
+enum ZoomMode: String, Equatable, Sendable, Codable {
     case fit
     case actual
     case manual
 }
 
-struct ViewportState: Equatable, Sendable {
+struct ViewportState: Equatable, Sendable, Codable {
     var zoomMode: ZoomMode = .fit
     var zoomScale: CGFloat = 1.0
     var normalizedCenter: CGPoint = CGPoint(x: 0.5, y: 0.5)

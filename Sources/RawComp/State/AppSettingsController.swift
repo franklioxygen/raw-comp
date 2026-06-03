@@ -1,4 +1,5 @@
 import Foundation
+import Observation
 import Sparkle
 import SwiftUI
 
@@ -160,24 +161,25 @@ enum AppLanguage: String, CaseIterable, Identifiable {
     ]
 }
 
+@Observable
 @MainActor
-final class AppSettingsController: ObservableObject {
-    @Published var theme: AppTheme {
+final class AppSettingsController {
+    var theme: AppTheme {
         didSet {
             UserDefaults.standard.set(theme.rawValue, forKey: Self.themeKey)
         }
     }
 
-    @Published var language: AppLanguage {
+    var language: AppLanguage {
         didSet {
             UserDefaults.standard.set(language.rawValue, forKey: Self.languageKey)
             Self.applyBundleLanguagePreference(language)
         }
     }
 
-    @Published private(set) var autoUpdateEnabled = false
-    @Published private(set) var canManageAutoUpdate = false
-    @Published private(set) var canCheckForUpdates = false
+    private(set) var autoUpdateEnabled = false
+    private(set) var canManageAutoUpdate = false
+    private(set) var canCheckForUpdates = false
 
     private weak var updater: SPUUpdater?
     private var canCheckObservation: NSKeyValueObservation?

@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct WorkspaceToolbar: View {
-    @ObservedObject var store: WorkspaceStore
+    var store: WorkspaceStore
     let onOpenAdvancedSettings: () -> Void
 
     var body: some View {
@@ -21,7 +21,7 @@ struct WorkspaceToolbar: View {
                         store.layout = layout
                     } label: {
                         Label {
-                            EmptyView()
+                            Text(layout.menuLabel)
                         } icon: {
                             Image(systemName: layout.menuIconSystemName)
                         }
@@ -75,6 +75,14 @@ struct WorkspaceToolbar: View {
 
             Divider()
                 .frame(height: 18)
+
+            sessionToolbarMenu
+
+            Button(action: store.exportComparisonToFile) {
+                toolbarStandaloneIcon("photo.on.rectangle.angled")
+            }
+            .help(L10n.string("toolbar.export_comparison"))
+            .buttonStyle(.plain)
 
             toolbarGroup {
                 Button(action: store.zoomOut) {
@@ -143,6 +151,37 @@ struct WorkspaceToolbar: View {
 
     private func toggleLinkMode() {
         store.linkMode = store.linkMode == .synced ? .unlinked : .synced
+    }
+
+    private var sessionToolbarMenu: some View {
+        Menu {
+            Button(L10n.string("toolbar.open_session"), action: store.openSessionFromFile)
+            Button(L10n.string("toolbar.save_session"), action: store.saveSessionToFile)
+
+            if store.recentSessions.first != nil {
+                Button(L10n.string("toolbar.open_recent_session"), action: store.openMostRecentSession)
+            }
+
+            if !store.recentSessions.isEmpty {
+                Divider()
+                ForEach(store.recentSessions, id: \.path) { url in
+                    Button(url.lastPathComponent) {
+                        store.openRecentSession(at: url)
+                    }
+                }
+                Divider()
+                Button(L10n.string("toolbar.clear_recent_sessions"), role: .destructive) {
+                    store.clearRecentSessions()
+                }
+            }
+        } label: {
+            toolbarIcon("folder.badge.gearshape")
+        }
+        .menuStyle(.button)
+        .buttonStyle(.plain)
+        .help(L10n.string("toolbar.session_menu"))
+        .frame(width: 44, height: toolbarHeight)
+        .toolbarButtonSurface()
     }
 
     private func toggleHighlightRegion() {
