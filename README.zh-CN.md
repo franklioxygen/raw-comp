@@ -17,7 +17,7 @@
 </p>
 
 <p align="center">
-  <img width="862" height="567" alt="Screenshot 2026-05-23 at 11 25 34 AM" src="https://github.com/user-attachments/assets/f92833ea-7fe3-42f5-9f39-2aa92a5f3f3f" />
+  <img width="862" height="567"  alt="Screenshot 2026-06-03 at 2 41 35 PM" src="https://github.com/user-attachments/assets/82511702-10fa-4c17-99f3-e6c6a27de943" />
 </p>
 
 ## 功能特性
