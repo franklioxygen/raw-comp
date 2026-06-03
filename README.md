@@ -13,7 +13,7 @@ RawComp is a macOS app for comparing multiple images side by side.
 It is built for photographers, retouchers, and reviewers who need to inspect subtle differences between RAW files, compressed exports, edits, crops, sharpness, color, and local detail.
 
 <p align="center">
-  <img width="862" height="567"  alt="Screenshot 2026-06-03 at 2 41 35 PM" src="https://github.com/user-attachments/assets/82511702-10fa-4c17-99f3-e6c6a27de943" />
+  <img width="590" height="362"  alt="Screenshot 2026-06-03 at 2 41 35 PM" src="https://github.com/user-attachments/assets/82511702-10fa-4c17-99f3-e6c6a27de943" />
 </p>
 
 
