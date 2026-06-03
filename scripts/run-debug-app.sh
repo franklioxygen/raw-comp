@@ -31,5 +31,10 @@ if [[ -n "$SPARKLE_FW" ]]; then
   install_name_tool -add_rpath "@executable_path/../Frameworks" "$APP/Contents/MacOS/$APP_NAME" 2>/dev/null || true
 fi
 
+# install_name_tool (and copying the binary) invalidates the original ad-hoc code
+# signature, which makes macOS kill the process on launch with
+# "SIGKILL (Code Signature Invalid)". Re-sign the bundle ad-hoc so it runs.
+codesign --force --deep --sign - "$APP" >/dev/null 2>&1 || true
+
 echo "Launching $APP"
 open "$APP"

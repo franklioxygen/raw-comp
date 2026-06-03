@@ -63,6 +63,7 @@ struct InspectorView: View {
                 }
                 .toggleStyle(.switch)
                 .controlSize(.small)
+                .help(L10n.string("adjustments.bypass_hold_hint"))
 
                 Spacer()
 
@@ -74,15 +75,8 @@ struct InspectorView: View {
                     }
                 }
                 .disabled(store.adjustments.isNeutral && !store.adjustments.inspector.bypassAllAdjustments)
+                .help(L10n.string("adjustments.reset_option_hint"))
             }
-
-            L10n.text("adjustments.reset_option_hint")
-                .font(.caption2)
-                .foregroundStyle(.secondary)
-
-            L10n.text("adjustments.bypass_hold_hint")
-                .font(.caption2)
-                .foregroundStyle(.secondary)
         }
         .padding(.bottom, 4)
     }

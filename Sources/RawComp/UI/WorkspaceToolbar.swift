@@ -5,152 +5,162 @@ struct WorkspaceToolbar: View {
     let onOpenAdvancedSettings: () -> Void
 
     var body: some View {
-        HStack(spacing: 12) {
-            Button(action: {
+        HStack(spacing: 8) {
+            fileGroup
+            toolbarDivider
+            layoutGroup
+            toolbarDivider
+            viewGroup
+            toolbarDivider
+            zoomGroup
+            toolbarDivider
+            transformGroup
+
+            Spacer(minLength: 12)
+
+            appGroup
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 7)
+        .background(Color(nsColor: .windowBackgroundColor))
+    }
+
+    // MARK: - Groups
+
+    private var fileGroup: some View {
+        HStack(spacing: 2) {
+            Button {
                 store.openImages()
-            }) {
-                toolbarStandaloneIcon("folder")
+            } label: {
+                toolbarLabel("folder")
             }
+            .buttonStyle(.plain)
             .help(L10n.string("toolbar.open_images"))
             .keyboardShortcut("o", modifiers: .command)
-            .buttonStyle(.plain)
-
-            Menu {
-                ForEach(ComparisonLayout.allCases) { layout in
-                    Button {
-                        store.layout = layout
-                    } label: {
-                        Label {
-                            Text(layout.menuLabel)
-                        } icon: {
-                            Image(systemName: layout.menuIconSystemName)
-                        }
-                    }
-                }
-            } label: {
-                HStack(spacing: 8) {
-                    Image(systemName: store.layout.menuIconSystemName)
-                        .frame(width: 16, height: 16)
-                    Image(systemName: "chevron.up.chevron.down")
-                        .font(.system(size: 11, weight: .semibold))
-                }
-                .frame(width: 72, height: toolbarHeight)
-                .toolbarButtonSurface()
-            }
-            .menuStyle(.button)
-            .buttonStyle(.plain)
-
-            Button(action: toggleLinkMode) {
-                linkModeIcon
-            }
-            .help(store.linkMode == .synced ? L10n.string("toolbar.linked") : L10n.string("toolbar.unlinked"))
-            .buttonStyle(.plain)
-
-            Button(action: toggleHighlightRegion) {
-                toolbarStandaloneIcon(
-                    store.highlightRect == nil ? "viewfinder.circle" : "xmark.circle",
-                    isActive: store.highlightRect != nil
-                )
-            }
-            .disabled(store.activePane?.loadedImage == nil && store.highlightRect == nil)
-            .opacity(store.activePane?.loadedImage == nil && store.highlightRect == nil ? 0.45 : 1)
-            .help(store.highlightRect == nil ? L10n.string("toolbar.mark_region") : L10n.string("toolbar.remove_region"))
-            .buttonStyle(.plain)
-
-            Button(action: {
-                store.showExifOverlay.toggle()
-            }) {
-                toolbarStandaloneIcon("info.circle", isActive: store.showExifOverlay)
-            }
-            .help(store.showExifOverlay ? L10n.string("toolbar.hide_exif") : L10n.string("toolbar.show_exif"))
-            .buttonStyle(.plain)
-
-            Button(action: {
-                store.showTopInfoBar.toggle()
-            }) {
-                toolbarStandaloneIcon("rectangle.tophalf.inset.filled", isActive: store.showTopInfoBar)
-            }
-            .help(store.showTopInfoBar ? L10n.string("toolbar.hide_top_bar") : L10n.string("toolbar.show_top_bar"))
-            .buttonStyle(.plain)
-
-            Divider()
-                .frame(height: 18)
 
             sessionToolbarMenu
 
             Button(action: store.exportComparisonToFile) {
-                toolbarStandaloneIcon("photo.on.rectangle.angled")
+                toolbarLabel("square.and.arrow.up")
             }
+            .buttonStyle(.plain)
             .help(L10n.string("toolbar.export_comparison"))
-            .buttonStyle(.plain)
-
-            toolbarGroup {
-                Button(action: store.zoomOut) {
-                    toolbarIcon("minus.magnifyingglass")
-                }
-                .help(L10n.string("toolbar.zoom_out"))
-                .buttonStyle(.plain)
-
-                Button(action: store.zoomIn) {
-                    toolbarIcon("plus.magnifyingglass")
-                }
-                .help(L10n.string("toolbar.zoom_in"))
-                .buttonStyle(.plain)
-            }
-
-            toolbarGroup {
-                Button(action: store.fitToWindow) {
-                    toolbarIcon("arrow.up.left.and.arrow.down.right")
-                }
-                .help(L10n.string("toolbar.fit_to_window"))
-                .buttonStyle(.plain)
-
-                Button(action: store.actualPixels) {
-                    toolbarCustomIcon {
-                        ActualPixelsGlyph()
-                    }
-                }
-                .help(L10n.string("toolbar.actual_pixels"))
-                .buttonStyle(.plain)
-            }
-
-            toolbarGroup {
-                Button(action: store.rotateLeft) {
-                    toolbarIcon("rotate.left")
-                }
-                .help(L10n.string("toolbar.rotate_left"))
-                .buttonStyle(.plain)
-
-                Button(action: store.rotateRight) {
-                    toolbarIcon("rotate.right")
-                }
-                .help(L10n.string("toolbar.rotate_right"))
-                .buttonStyle(.plain)
-            }
-
-            Spacer()
-
-            Button(action: onOpenAdvancedSettings) {
-                toolbarStandaloneIcon("gearshape")
-            }
-            .help(L10n.string("toolbar.advanced_settings"))
-            .buttonStyle(.plain)
-
-            Button(action: {
-                store.showInspector.toggle()
-            }) {
-                toolbarStandaloneIcon("sidebar.right", isActive: store.showInspector)
-            }
-            .help(store.showInspector ? L10n.string("toolbar.hide_inspector") : L10n.string("toolbar.show_inspector"))
-            .buttonStyle(.plain)
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 12)
-        .background(Color(nsColor: .underPageBackgroundColor))
     }
 
-    private func toggleLinkMode() {
-        store.linkMode = store.linkMode == .synced ? .unlinked : .synced
+    private var layoutGroup: some View {
+        HStack(spacing: 2) {
+            ForEach(ComparisonLayout.allCases) { layout in
+                Button {
+                    store.layout = layout
+                } label: {
+                    toolbarLabel(layout.menuIconSystemName, isActive: store.layout == layout)
+                }
+                .buttonStyle(.plain)
+                .help(layout.menuLabel)
+            }
+        }
+    }
+
+    private var viewGroup: some View {
+        HStack(spacing: 2) {
+            Button(action: toggleLinkMode) {
+                linkModeLabel
+            }
+            .buttonStyle(.plain)
+            .help(store.linkMode == .synced ? L10n.string("toolbar.linked") : L10n.string("toolbar.unlinked"))
+
+            Button(action: toggleHighlightRegion) {
+                toolbarLabel(
+                    store.highlightRect == nil ? "viewfinder" : "viewfinder.circle.fill",
+                    isActive: store.highlightRect != nil
+                )
+            }
+            .buttonStyle(.plain)
+            .disabled(highlightDisabled)
+            .opacity(highlightDisabled ? 0.4 : 1)
+            .help(store.highlightRect == nil ? L10n.string("toolbar.mark_region") : L10n.string("toolbar.remove_region"))
+
+            Button {
+                store.showExifOverlay.toggle()
+            } label: {
+                toolbarLabel("info.circle", isActive: store.showExifOverlay)
+            }
+            .buttonStyle(.plain)
+            .help(store.showExifOverlay ? L10n.string("toolbar.hide_exif") : L10n.string("toolbar.show_exif"))
+
+            Button {
+                store.showTopInfoBar.toggle()
+            } label: {
+                toolbarLabel("rectangle.tophalf.inset.filled", isActive: store.showTopInfoBar)
+            }
+            .buttonStyle(.plain)
+            .help(store.showTopInfoBar ? L10n.string("toolbar.hide_top_bar") : L10n.string("toolbar.show_top_bar"))
+        }
+    }
+
+    private var zoomGroup: some View {
+        HStack(spacing: 2) {
+            Button(action: store.zoomOut) {
+                toolbarLabel("minus.magnifyingglass")
+            }
+            .buttonStyle(.plain)
+            .help(L10n.string("toolbar.zoom_out"))
+
+            Button(action: store.zoomIn) {
+                toolbarLabel("plus.magnifyingglass")
+            }
+            .buttonStyle(.plain)
+            .help(L10n.string("toolbar.zoom_in"))
+
+            Button(action: store.fitToWindow) {
+                toolbarLabel("arrow.up.left.and.arrow.down.right")
+            }
+            .buttonStyle(.plain)
+            .help(L10n.string("toolbar.fit_to_window"))
+
+            Button(action: store.actualPixels) {
+                ActualPixelsGlyph()
+                    .frame(width: 15, height: 15)
+                    .modifier(ToolbarSurface())
+            }
+            .buttonStyle(.plain)
+            .help(L10n.string("toolbar.actual_pixels"))
+        }
+    }
+
+    private var transformGroup: some View {
+        HStack(spacing: 2) {
+            Button(action: store.rotateLeft) {
+                toolbarLabel("rotate.left")
+            }
+            .buttonStyle(.plain)
+            .help(L10n.string("toolbar.rotate_left"))
+
+            Button(action: store.rotateRight) {
+                toolbarLabel("rotate.right")
+            }
+            .buttonStyle(.plain)
+            .help(L10n.string("toolbar.rotate_right"))
+        }
+    }
+
+    private var appGroup: some View {
+        HStack(spacing: 2) {
+            Button(action: onOpenAdvancedSettings) {
+                toolbarLabel("gearshape")
+            }
+            .buttonStyle(.plain)
+            .help(L10n.string("toolbar.advanced_settings"))
+
+            Button {
+                store.showInspector.toggle()
+            } label: {
+                toolbarLabel("sidebar.right", isActive: store.showInspector)
+            }
+            .buttonStyle(.plain)
+            .help(store.showInspector ? L10n.string("toolbar.hide_inspector") : L10n.string("toolbar.show_inspector"))
+        }
     }
 
     private var sessionToolbarMenu: some View {
@@ -175,13 +185,22 @@ struct WorkspaceToolbar: View {
                 }
             }
         } label: {
-            toolbarIcon("folder.badge.gearshape")
+            toolbarLabel("clock.arrow.circlepath")
         }
         .menuStyle(.button)
         .buttonStyle(.plain)
+        .menuIndicator(.hidden)
         .help(L10n.string("toolbar.session_menu"))
-        .frame(width: 44, height: toolbarHeight)
-        .toolbarButtonSurface()
+    }
+
+    // MARK: - Helpers
+
+    private var highlightDisabled: Bool {
+        store.activePane?.loadedImage == nil && store.highlightRect == nil
+    }
+
+    private func toggleLinkMode() {
+        store.linkMode = store.linkMode == .synced ? .unlinked : .synced
     }
 
     private func toggleHighlightRegion() {
@@ -192,76 +211,73 @@ struct WorkspaceToolbar: View {
         }
     }
 
-    private var toolbarHeight: CGFloat {
-        34
+    private func toolbarLabel(_ systemName: String, isActive: Bool = false) -> some View {
+        Image(systemName: systemName)
+            .font(.system(size: 15, weight: .medium))
+            .modifier(ToolbarSurface(isActive: isActive))
     }
 
-    private var linkModeIcon: some View {
+    private var linkModeLabel: some View {
         ZStack {
             Image(systemName: "link")
-                .frame(width: 18, height: 18)
+                .font(.system(size: 15, weight: .medium))
 
             if store.linkMode == .unlinked {
                 Rectangle()
                     .fill(Color.primary)
-                    .frame(width: 2, height: 20)
+                    .frame(width: 1.6, height: 19)
                     .rotationEffect(.degrees(45))
             }
         }
-        .frame(width: 44, height: toolbarHeight)
-        .toolbarButtonSurface(isActive: store.linkMode == .synced)
+        .modifier(ToolbarSurface(isActive: store.linkMode == .synced))
     }
 
-    private func toolbarButtonLabel(_ title: String, systemName: String, isActive: Bool = false) -> some View {
-        HStack(spacing: 8) {
-            Image(systemName: systemName)
-                .frame(width: 18, height: 18)
-            Text(title)
-                .fontWeight(.medium)
+    private var toolbarDivider: some View {
+        Rectangle()
+            .fill(Color.primary.opacity(0.12))
+            .frame(width: 1, height: 18)
+    }
+}
+
+private struct ToolbarSurface: ViewModifier {
+    var isActive: Bool = false
+
+    func body(content: Content) -> some View {
+        ToolbarSurfaceBody(isActive: isActive) { content }
+    }
+
+    private struct ToolbarSurfaceBody<C: View>: View {
+        let isActive: Bool
+        @ViewBuilder var content: () -> C
+        @State private var hovering = false
+
+        var body: some View {
+            content()
+                .foregroundStyle(isActive ? Color.accentColor : Color.primary)
+                .frame(width: 30, height: 30)
+                .background(
+                    RoundedRectangle(cornerRadius: 7, style: .continuous)
+                        .fill(background)
+                )
+                .contentShape(RoundedRectangle(cornerRadius: 7, style: .continuous))
+                .onHover { hovering = $0 }
+                .animation(.easeOut(duration: 0.12), value: hovering)
+                .animation(.easeOut(duration: 0.12), value: isActive)
         }
-        .padding(.horizontal, 14)
-        .frame(height: toolbarHeight)
-        .toolbarButtonSurface(isActive: isActive)
-    }
 
-    private func toolbarStandaloneIcon(_ systemName: String, isActive: Bool = false) -> some View {
-        Image(systemName: systemName)
-            .frame(width: 18, height: 18)
-            .frame(width: 44, height: toolbarHeight)
-            .toolbarButtonSurface(isActive: isActive)
-    }
-
-    private func toolbarGroup<Content: View>(@ViewBuilder content: () -> Content) -> some View {
-        HStack(spacing: 0, content: content)
-            .frame(width: 88, height: toolbarHeight)
-            .toolbarButtonSurface()
-            .overlay {
-                Rectangle()
-                    .fill(Color.secondary.opacity(0.22))
-                    .frame(width: 1, height: 18)
+        private var background: Color {
+            if isActive {
+                return Color.accentColor.opacity(hovering ? 0.26 : 0.18)
             }
+            return hovering ? Color.primary.opacity(0.09) : Color.clear
+        }
     }
-
-    private func toolbarIcon(_ systemName: String) -> some View {
-        Image(systemName: systemName)
-            .frame(width: 18, height: 18)
-            .frame(width: 44, height: toolbarHeight)
-            .contentShape(Rectangle())
-    }
-
-    private func toolbarCustomIcon<Content: View>(@ViewBuilder content: () -> Content) -> some View {
-        content()
-            .frame(width: 18, height: 18)
-            .frame(width: 44, height: toolbarHeight)
-            .contentShape(Rectangle())
-    }
-
 }
 
 private struct ActualPixelsGlyph: View {
     var body: some View {
         GeometryReader { geometry in
-            let inset = geometry.size.width * 0.18
+            let inset = geometry.size.width * 0.12
             let rect = CGRect(
                 x: inset,
                 y: inset,
@@ -277,18 +293,8 @@ private struct ActualPixelsGlyph: View {
 
                 Circle()
                     .fill(Color.primary)
-                    .frame(width: geometry.size.width * 0.18, height: geometry.size.height * 0.18)
+                    .frame(width: geometry.size.width * 0.2, height: geometry.size.height * 0.2)
             }
         }
-    }
-}
-
-private extension View {
-    func toolbarButtonSurface(isActive: Bool = false) -> some View {
-        foregroundStyle(isActive ? Color.accentColor : Color.primary)
-            .background(
-                RoundedRectangle(cornerRadius: 8, style: .continuous)
-                    .fill(isActive ? Color.accentColor.opacity(0.18) : Color(nsColor: .controlBackgroundColor))
-            )
     }
 }

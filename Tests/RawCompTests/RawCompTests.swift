@@ -3,6 +3,99 @@ import Foundation
 import Testing
 @testable import RawComp
 
+@Test func sessionMigrationRestoresLayoutFromPaneCount() async throws {
+    let document = ComparisonSessionDocument(
+        layout: .two,
+        panes: (0..<6).map { PaneSessionState(slot: $0, filePath: "/tmp/\($0).jpg", viewport: nil) }
+    )
+
+    let migrated = ComparisonSessionDocument.migrate(document)
+    #expect(migrated.layout == .six)
+}
+
+@Test func exportRendererUsesRequestedCanvasSize() async throws {
+    let colorSpace = CGColorSpaceCreateDeviceRGB()
+    let bitmapInfo = CGImageAlphaInfo.premultipliedLast.rawValue
+    let context = CGContext(
+        data: nil,
+        width: 100,
+        height: 50,
+        bitsPerComponent: 8,
+        bytesPerRow: 0,
+        space: colorSpace,
+        bitmapInfo: bitmapInfo
+    )
+    #expect(context != nil)
+    context?.setFillColor(CGColor(red: 1, green: 1, blue: 1, alpha: 1))
+    context?.fill(CGRect(x: 0, y: 0, width: 100, height: 50))
+    let image = context?.makeImage()
+    #expect(image != nil)
+
+    let rendered = ComparisonExportRenderer.renderGrid(
+        panes: [
+            ComparisonExportRenderer.Pane(
+                title: "Pane 1",
+                image: image!,
+                subtitle: "100x50",
+                exifSummary: "ISO 100"
+            )
+        ],
+        columns: 1,
+        canvasSize: CGSize(width: 240, height: 140),
+        includeLabels: true,
+        includeTopInfoBar: true,
+        includeBottomInfoBar: true
+    )
+
+    #expect(rendered != nil)
+    #expect(rendered?.width == 240)
+    #expect(rendered?.height == 140)
+}
+
+@Test func exportViewportRendererCropsCurrentVisibleRegion() async throws {
+    let colorSpace = CGColorSpaceCreateDeviceRGB()
+    let width = 2
+    let height = 2
+    let bytesPerRow = width * 4
+    var pixels = [UInt8](repeating: 0, count: height * bytesPerRow)
+    let topRow = height - 1
+    pixels[topRow * bytesPerRow] = 255
+    pixels[(topRow * bytesPerRow) + 3] = 255
+
+    guard
+        let context = CGContext(
+            data: &pixels,
+            width: width,
+            height: height,
+            bitsPerComponent: 8,
+            bytesPerRow: bytesPerRow,
+            space: colorSpace,
+            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+        ),
+        let image = context.makeImage()
+    else {
+        Issue.record("Failed to create viewport export image")
+        return
+    }
+
+    let cropped = ComparisonExportViewportRenderer.renderVisibleImage(
+        image,
+        viewport: ViewportState(
+            zoomMode: .manual,
+            zoomScale: 2,
+            normalizedCenter: CGPoint(x: 0.25, y: 0.25),
+            visibleRectNormalized: CGRect(x: 0, y: 0, width: 0.5, height: 0.5),
+            rotationQuarterTurns: 0
+        )
+    )
+
+    #expect(cropped?.width == 1)
+    #expect(cropped?.height == 1)
+    let sample = samplePixel(from: cropped, x: 0, yFromTop: 0)
+    #expect(sample.red == 255)
+    #expect(sample.green == 0)
+}
+
 @Test func layoutGridConfigurationMatchesPaneCounts() async throws {
     #expect(ComparisonLayout.two.columnCount == 2)
     #expect(ComparisonLayout.three.columnCount == 3)
@@ -42,6 +135,26 @@ import Testing
         let value = L10n.string(key)
         #expect(value != key, "Missing localization for \(key)")
     }
+}
+
+@Test func basicExifSummaryUsesEnglishISOText() async throws {
+    let metadata = ImageMetadata(
+        fileName: "sample.jpg",
+        fileType: "jpg",
+        pixelWidth: 100,
+        pixelHeight: 100,
+        fileSizeBytes: nil,
+        colorModel: nil,
+        profileName: nil,
+        usesRawPipeline: false,
+        exifFields: [
+            ImageMetadataField(id: "iso", labelKey: "exif.iso", value: "400"),
+            ImageMetadataField(id: "f_number", labelKey: "exif.aperture", value: "f/2.8")
+        ]
+    )
+
+    #expect(metadata.basicExifSummary?.contains("ISO 400") == true)
+    #expect(metadata.basicExifSummary?.contains("感光度") == false)
 }
 
 @Test func paneOpticsByPathEncodesForSessions() async throws {
@@ -441,6 +554,143 @@ import Testing
     RecentSessionsStore.clear()
 }
 
+@Test func timestampedFilenameIncludesDateTimeStamp() async throws {
+    let date = Calendar.current.date(
+        from: DateComponents(year: 2026, month: 6, day: 3, hour: 14, minute: 30, second: 45)
+    )!
+
+    let filename = TimestampedFilename.make(fromDefaultFilename: "Comparison.png", date: date)
+    #expect(filename == "Comparison 2026-06-03 14-30-45.png")
+
+    let sessionFilename = RawCompSessionFile.defaultFilenameWithTimestamp(date: date)
+    #expect(sessionFilename == "Comparison 2026-06-03 14-30-45.rawcomp")
+}
+
+@Test func comparisonExportRendererDrawsInfoBarsWhenEnabled() async throws {
+    let side = 100
+    let colorSpace = CGColorSpaceCreateDeviceRGB()
+    let bytesPerRow = side * 4
+    var pixels = [UInt8](repeating: 255, count: side * bytesPerRow)
+    for index in stride(from: 0, to: pixels.count, by: 4) {
+        pixels[index + 3] = 255
+    }
+
+    guard
+        let context = CGContext(
+            data: &pixels,
+            width: side,
+            height: side,
+            bitsPerComponent: 8,
+            bytesPerRow: bytesPerRow,
+            space: colorSpace,
+            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+        ),
+        let image = context.makeImage()
+    else {
+        Issue.record("Failed to create export test image")
+        return
+    }
+
+    let pane = ComparisonExportRenderer.Pane(title: "A", image: image, subtitle: "100 x 100", exifSummary: "f/2.8")
+    let plain = ComparisonExportRenderer.renderGrid(
+        panes: [pane],
+        columns: 1,
+        includeLabels: false,
+        includeTopInfoBar: false,
+        includeBottomInfoBar: false
+    )
+    let withBars = ComparisonExportRenderer.renderGrid(
+        panes: [pane],
+        columns: 1,
+        includeLabels: false,
+        includeTopInfoBar: true,
+        includeBottomInfoBar: true
+    )
+
+    guard let withBars, let plain else {
+        Issue.record("Export failed")
+        return
+    }
+
+    #expect(plain.dataProvider?.data != withBars.dataProvider?.data)
+
+    let spacing = 4
+    let imageTopFromCanvasTop = spacing
+    let topBand = samplePixel(from: withBars, x: spacing + 20, yFromTop: imageTopFromCanvasTop + 10)
+    let plainTopBand = samplePixel(from: plain, x: spacing + 20, yFromTop: imageTopFromCanvasTop + 10)
+    #expect(plainTopBand.red == 255)
+    #expect(topBand.red < plainTopBand.red)
+}
+
+@Test func comparisonExportRendererPreservesImageOrientation() async throws {
+    let colorSpace = CGColorSpaceCreateDeviceRGB()
+    let width = 2
+    let height = 2
+    let bytesPerRow = width * 4
+    var pixels = [UInt8](repeating: 0, count: height * bytesPerRow)
+    let topRow = height - 1
+    pixels[topRow * bytesPerRow] = 255
+    pixels[(topRow * bytesPerRow) + 3] = 255
+
+    guard
+        let context = CGContext(
+            data: &pixels,
+            width: width,
+            height: height,
+            bitsPerComponent: 8,
+            bytesPerRow: bytesPerRow,
+            space: colorSpace,
+            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+        ),
+        let markerImage = context.makeImage()
+    else {
+        Issue.record("Failed to create orientation test image")
+        return
+    }
+
+    let exported = ComparisonExportRenderer.renderGrid(
+        panes: [ComparisonExportRenderer.Pane(title: "A", image: markerImage, subtitle: nil, exifSummary: nil)],
+        columns: 1,
+        includeLabels: false,
+        includeTopInfoBar: false,
+        includeBottomInfoBar: false
+    )
+
+    guard let exported else {
+        Issue.record("Export failed")
+        return
+    }
+
+    let imageOrigin = 4
+    let sample = samplePixel(from: exported, x: imageOrigin, yFromTop: imageOrigin)
+    #expect(sample.red == 255)
+    #expect(sample.green == 0)
+}
+
+private func samplePixel(
+    from image: CGImage?,
+    x: Int,
+    yFromTop: Int
+) -> (red: UInt8, green: UInt8, blue: UInt8, alpha: UInt8) {
+    guard
+        let image,
+        let data = image.dataProvider?.data,
+        let bytes = CFDataGetBytePtr(data)
+    else {
+        return (0, 0, 0, 0)
+    }
+
+    let bytesPerRow = image.bytesPerRow
+    let bytesPerPixel = max(image.bitsPerPixel / max(image.bitsPerComponent, 1), 4)
+    let row = max(image.height - 1 - yFromTop, 0)
+    let offset = (row * bytesPerRow) + (x * bytesPerPixel)
+    guard offset + 3 < CFDataGetLength(data) else {
+        return (0, 0, 0, 0)
+    }
+
+    return (bytes[offset], bytes[offset + 1], bytes[offset + 2], bytes[offset + 3])
+}
+
 @Test func comparisonExportRendererBuildsGrid() async throws {
     let colorSpace = CGColorSpaceCreateDeviceRGB()
     var pixels = [UInt8](repeating: 128, count: 4)
@@ -461,7 +711,10 @@ import Testing
     }
 
     let composite = ComparisonExportRenderer.renderGrid(
-        panes: [("A", image), ("B", image)],
+        panes: [
+            ComparisonExportRenderer.Pane(title: "A", image: image, subtitle: "1 x 1", exifSummary: nil),
+            ComparisonExportRenderer.Pane(title: "B", image: image, subtitle: "1 x 1", exifSummary: nil)
+        ],
         columns: 2
     )
 

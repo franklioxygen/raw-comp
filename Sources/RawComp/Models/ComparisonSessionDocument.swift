@@ -20,12 +20,17 @@ struct ComparisonSessionDocument: Codable, Sendable {
     /// Applies forward migrations for older session documents.
     /// Extend this switch when the version number increases.
     static func migrate(_ document: ComparisonSessionDocument) -> ComparisonSessionDocument {
+        var migrated = document
+
         switch document.version {
         case currentVersion:
-            return document
+            break
         default:
             // Unknown future version: return as-is and let missing fields use defaults.
-            return document
+            break
         }
+
+        migrated.layout = ComparisonLayout.restoredLayout(migrated.layout, paneStates: migrated.panes)
+        return migrated
     }
 }

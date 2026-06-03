@@ -75,14 +75,6 @@ private struct AdvancedSettingsView: View {
                     )
                 )
 
-                Toggle(
-                    L10n.string("settings.export_labels"),
-                    isOn: Binding(
-                        get: { LaunchWorkspacePreferences.exportIncludesLabels },
-                        set: { LaunchWorkspacePreferences.exportIncludesLabels = $0 }
-                    )
-                )
-
                 HStack {
                     L10n.text("settings.manual_update")
                     Spacer()

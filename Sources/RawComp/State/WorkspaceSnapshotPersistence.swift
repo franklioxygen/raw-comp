@@ -4,6 +4,10 @@ struct WorkspaceSnapshot: Codable, Sendable {
     var layout: ComparisonLayout = .two
     var linkMode: LinkMode = .synced
     var panes: [PaneSessionState] = []
+
+    var restoredLayout: ComparisonLayout {
+        ComparisonLayout.restoredLayout(layout, paneStates: panes)
+    }
 }
 
 enum WorkspaceSnapshotPersistence {

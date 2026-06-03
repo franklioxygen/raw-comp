@@ -31,6 +31,12 @@ struct ComparisonGridView: View {
                     WipeDividerOverlay(store: store)
                 }
             }
+            .onAppear {
+                store.updateComparisonCanvasSize(proxy.size)
+            }
+            .onChange(of: proxy.size) { _, newSize in
+                store.updateComparisonCanvasSize(newSize)
+            }
         }
     }
 

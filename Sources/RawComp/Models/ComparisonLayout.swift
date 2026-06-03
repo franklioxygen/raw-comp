@@ -52,4 +52,27 @@ enum ComparisonLayout: Int, CaseIterable, Identifiable, Sendable, Codable {
             "6 Panes"
         }
     }
+
+    static func bestFit(forPaneCount paneCount: Int) -> ComparisonLayout {
+        switch max(paneCount, 0) {
+        case 0...2:
+            .two
+        case 3:
+            .three
+        case 4:
+            .four
+        default:
+            .six
+        }
+    }
+
+    static func restoredLayout(_ stored: ComparisonLayout, paneStates: [PaneSessionState]) -> ComparisonLayout {
+        let highestSlot = (paneStates.map(\.slot).max() ?? -1) + 1
+        let requiredPaneCount = max(paneStates.count, highestSlot)
+        guard requiredPaneCount > stored.paneCount else {
+            return stored
+        }
+
+        return bestFit(forPaneCount: requiredPaneCount)
+    }
 }

@@ -64,6 +64,7 @@ final class WorkspaceStore {
     var activePixelReadout: PixelReadout?
     var referencePixelReadout: PixelReadout?
     var activePixelDeltaE: Double?
+    var comparisonCanvasSize: CGSize = .zero
     var blinkShowsSecondary = false
     private(set) var emphasizesClippingIndicators = false
     var savedPresets: [SavedAdjustmentPreset] = AdjustmentPresetStore.loadPresets()
@@ -475,7 +476,7 @@ final class WorkspaceStore {
     func saveSessionToFile() {
         let panel = NSSavePanel()
         panel.allowedContentTypes = [.rawCompSession, .json]
-        panel.nameFieldStringValue = RawCompSessionFile.defaultFilename
+        panel.nameFieldStringValue = RawCompSessionFile.defaultFilenameWithTimestamp()
         panel.message = L10n.string("session.save_panel_message")
 
         guard panel.runModal() == .OK, let url = panel.url else {
@@ -622,14 +623,21 @@ final class WorkspaceStore {
     }
 
     func exportComparisonToFile() {
-        let loaded = visiblePanes.compactMap { pane -> (String, CGImage)? in
+        let loaded = visiblePanes.compactMap { pane -> ComparisonExportRenderer.Pane? in
             guard
                 let image = displayCGImage(for: pane) ?? pane.loadedImage?.cgImage
             else {
                 return nil
             }
 
-            return (pane.title, image)
+            let subtitle = pane.loadedImage?.metadata.dimensionsText
+            let exifSummary = pane.loadedImage?.metadata.basicExifSummary
+            return ComparisonExportRenderer.Pane(
+                title: pane.title,
+                image: ComparisonExportViewportRenderer.renderVisibleImage(image, viewport: pane.viewport) ?? image,
+                subtitle: subtitle,
+                exifSummary: exifSummary
+            )
         }
 
         guard !loaded.isEmpty else {
@@ -641,7 +649,11 @@ final class WorkspaceStore {
             let composite = ComparisonExportRenderer.renderGrid(
                 panes: loaded,
                 columns: layout.columnCount,
-                includeLabels: LaunchWorkspacePreferences.exportIncludesLabels
+                canvasSize: comparisonCanvasSize,
+                spacing: 0,
+                includeLabels: false,
+                includeTopInfoBar: showTopInfoBar,
+                includeBottomInfoBar: showExifOverlay
             )
         else {
             statusMessage = L10n.string("status.export_failed")
@@ -650,7 +662,9 @@ final class WorkspaceStore {
 
         let panel = NSSavePanel()
         panel.allowedContentTypes = [.png, .tiff]
-        panel.nameFieldStringValue = L10n.string("export.default_filename")
+        panel.nameFieldStringValue = TimestampedFilename.make(
+            fromDefaultFilename: L10n.string("export.default_filename")
+        )
         panel.message = L10n.string("export.save_panel_message")
 
         guard panel.runModal() == .OK, let url = panel.url else {
@@ -713,6 +727,19 @@ final class WorkspaceStore {
         }
 
         restoreWorkspaceSnapshotIfNeeded()
+    }
+
+    func updateComparisonCanvasSize(_ size: CGSize) {
+        guard size.width.isFinite, size.height.isFinite else {
+            return
+        }
+
+        let normalized = CGSize(width: max(size.width, 0), height: max(size.height, 0))
+        guard comparisonCanvasSize != normalized else {
+            return
+        }
+
+        comparisonCanvasSize = normalized
     }
 
     func autoLightToneFromActivePane() {
@@ -1457,7 +1484,7 @@ final class WorkspaceStore {
             return
         }
 
-        layout = snapshot.layout
+        layout = snapshot.restoredLayout
         linkMode = snapshot.linkMode
 
         for paneState in snapshot.panes {
