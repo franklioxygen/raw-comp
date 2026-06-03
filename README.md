@@ -26,7 +26,7 @@ It is built for photographers, retouchers, and reviewers who need to inspect sub
 - Mark a synchronized highlight region to call attention to matching detail areas.
 - Apply shared, non-destructive comparison adjustments across all loaded panes (Light, tone curve, color, B&W, presence, noise, optics, geometry).
 - Use professional compare modes: clipping overlay, edge map, false color, noise emphasis, absolute difference, Delta E, blink, and wipe (2-up).
-- Save and reopen `.rawcomp` comparison sessions; export the comparison grid as PNG or TIFF.
+- Save and reopen `.rawcomp` comparison sessions with layout restoration; export the comparison grid as PNG or TIFF using each pane's current zoomed viewport.
 - Inspect histogram, pixel readout, and file metadata for the active pane.
 
 ## Current Status
@@ -41,7 +41,7 @@ What works well now:
 - Sectioned comparison inspector with bypass, presets, and autosave
 - Histogram, clipping indicators, and cursor readout
 - Compare modes including difference, wipe, and blink (2-up layout)
-- Session save/open and comparison export
+- Session save/open with multi-pane layout restoration, and comparison export from the current viewport
 - Metadata inspection and 8 UI languages
 
 What is still planned (see [product spec](documents/rawcomp-product-spec.md)):
@@ -96,13 +96,27 @@ You can also open `Package.swift` in Xcode and run the app there.
 5. Use zoom, fit, `100%`, and rotate controls from the toolbar.
 6. Use `Mark Region` to capture the current visible area as a synchronized highlight region.
 7. Expand inspector sections (Light, Color, Compare Modes, etc.) and drag sliders to amplify subtle differences.
-8. Save a `.rawcomp` session or export the grid from the toolbar when you need to share a layout.
+8. Save a `.rawcomp` session when you want to restore the same pane layout later, or export the grid from the toolbar when you need to share the current zoomed view.
 
 ## Why Shared Adjustments Matter
 
 Some image differences are hard to notice in a neutral view, especially in shadows, low-contrast textures, edges, compression artifacts, or fine noise patterns.
 
 The shared adjustment controls let you push every image in the same way, so the comparison stays fair while making those differences easier to spot.
+
+## Adjustable Controls
+
+- Light: exposure, brightness, contrast, highlights, shadows, whites, blacks, gamma
+- Tone Curve: master curve preset/custom curve, red curve preset/custom curve, green curve preset/custom curve, blue curve preset/custom curve
+- Color: temperature, tint, vibrance, saturation, global hue shift
+- Color Mixer: per-band hue, saturation, and luminance for red, orange, yellow, green, aqua, blue, purple, and magenta
+- Black & White: monochrome compare plus per-band luminance for red, orange, yellow, green, aqua, blue, purple, and magenta
+- Presence: clarity, texture, sharpening amount, sharpening radius, sharpening detail, sharpening masking, edge-map preview
+- Noise: luminance noise reduction, luminance detail, luminance contrast, color noise reduction, color detail, color smoothness, purple defringe, green defringe, noise-emphasis preview
+- Optics: lens profile correction, distortion amount, vignetting amount, chromatic aberration removal, flat-field correction
+- Geometry: fine rotate, horizontal flip, vertical flip, crop aspect lock, crop overlay, crop rectangle
+- Compare Modes: normal, luma only, clipping overlay, false color, edge map, noise emphasis, absolute difference, Delta E, blink, wipe
+- Compare Mode Settings: reference pane, analysis gain, wipe position, blink interval
 
 ## Development
 
