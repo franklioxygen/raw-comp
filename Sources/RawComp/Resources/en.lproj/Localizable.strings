@@ -20,6 +20,8 @@
 "inspector.exif" = "EXIF";
 "top_info.title" = "Top Info Bar";
 "top_info.pane" = "Pane";
+"picker.all" = "All";
+"picker.clear" = "Clear";
 "inspector.empty" = "Select a pane with an image to inspect file details and viewport state.";
 
 "adjustments.title" = "Comparison Adjustments";
@@ -242,6 +244,7 @@
 "settings.autoupdate" = "Enable automatic update checks";
 "settings.manual_update" = "Manual update";
 "settings.check_updates" = "Check for Updates…";
+"settings.software_version" = "Software Version";
 "settings.footer.available" = "Theme and language changes apply immediately. Language selection is used where localized resources are available.";
 "settings.footer.unavailable" = "Update controls are unavailable because Sparkle is not configured for this build.";
 "settings.version" = "Version %@ (Build %@)";
@@ -264,10 +267,6 @@
 "toolbar.unlinked" = "Panes move independently";
 "toolbar.mark_region" = "Mark synchronized region";
 "toolbar.remove_region" = "Remove synchronized region";
-"toolbar.hide_exif" = "Hide EXIF overlay";
-"toolbar.show_exif" = "Show EXIF overlay";
-"toolbar.hide_top_bar" = "Hide top info bar";
-"toolbar.show_top_bar" = "Show top info bar";
 "toolbar.zoom_out" = "Zoom out";
 "toolbar.zoom_in" = "Zoom in";
 "toolbar.fit_to_window" = "Fit to window";
@@ -318,7 +317,6 @@
 "pane.state.loading" = "Loading";
 "pane.state.ready" = "Ready";
 "pane.title" = "Pane %d";
-"pane.drop_or_load" = "Drop a file or load one into this pane.";
 "pane.empty_description" = "Load a standard image or a RAW file to start comparing.";
 "pane.load_image" = "Load Image";
 

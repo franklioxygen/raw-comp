@@ -14,6 +14,18 @@ enum ComparisonAdjustmentFormatting {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
         formatter.locale = .current
-        return formatter.number(from: trimmed)?.doubleValue
+        if let value = formatter.number(from: trimmed)?.doubleValue {
+            return value
+        }
+
+        let separator = NSRegularExpression.escapedPattern(for: formatter.decimalSeparator ?? ".")
+        let pattern = #"^[+-]?\d+(?:\#(separator)\d+)?"#
+        guard
+            let range = trimmed.range(of: pattern, options: .regularExpression)
+        else {
+            return nil
+        }
+
+        return formatter.number(from: String(trimmed[range]))?.doubleValue
     }
 }

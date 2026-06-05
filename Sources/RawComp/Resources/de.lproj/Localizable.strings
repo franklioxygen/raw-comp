@@ -13,6 +13,8 @@
 "inspector.exif" = "EXIF-Metadaten";
 "top_info.title" = "Obere Infoleiste";
 "top_info.pane" = "Feld";
+"picker.all" = "Alle";
+"picker.clear" = "Leeren";
 "inspector.empty" = "Wählen Sie ein Feld mit einem Bild aus, um Dateidetails und den Ansichtsstatus anzuzeigen.";
 
 "adjustments.title" = "Vergleichsanpassungen";
@@ -31,9 +33,10 @@
 "settings.autoupdate" = "Automatische Update-Prüfung";
 "settings.manual_update" = "Manuelles Update";
 "settings.check_updates" = "Nach Updates suchen…";
+"settings.software_version" = "Softwareversion";
 "settings.footer.available" = "Änderungen an Thema und Sprache werden sofort angewendet. Die Sprachauswahl wird verwendet, wenn lokalisierte Ressourcen verfügbar sind.";
 "settings.footer.unavailable" = "Update-Steuerelemente sind nicht verfügbar, weil Sparkle für diesen Build nicht konfiguriert ist.";
-"settings.version" = "Version";
+"settings.version" = "Version %@ (Build %@)";
 "settings.theme.system" = "Systemdarstellung";
 "settings.theme.light" = "Hell";
 "settings.theme.dark" = "Dunkel";
@@ -53,10 +56,6 @@
 "toolbar.unlinked" = "Bereiche bewegen sich unabhängig";
 "toolbar.mark_region" = "Synchronisierten Bereich markieren";
 "toolbar.remove_region" = "Synchronisierten Bereich entfernen";
-"toolbar.hide_exif" = "EXIF-Overlay ausblenden";
-"toolbar.show_exif" = "EXIF-Overlay anzeigen";
-"toolbar.hide_top_bar" = "Obere Infoleiste ausblenden";
-"toolbar.show_top_bar" = "Obere Infoleiste anzeigen";
 "toolbar.zoom_out" = "Verkleinern";
 "toolbar.zoom_in" = "Vergrößern";
 "toolbar.fit_to_window" = "An Fenster anpassen";
@@ -107,7 +106,6 @@
 "pane.state.loading" = "Lädt";
 "pane.state.ready" = "Bereit";
 "pane.title" = "Bereich %d";
-"pane.drop_or_load" = "Datei hier ablegen oder in diesen Bereich laden.";
 "pane.empty_description" = "Laden Sie ein Standardbild oder eine RAW-Datei, um den Vergleich zu beginnen.";
 "pane.load_image" = "Bild laden";
 

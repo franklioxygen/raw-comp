@@ -86,7 +86,7 @@ struct WorkspaceToolbar: View {
             Button {
                 showsExifFieldPicker.toggle()
             } label: {
-                toolbarLabel("info.circle", isActive: showsExifFieldPicker || store.showExifOverlay)
+                toolbarLabel("info.circle", isActive: store.showExifOverlay)
             }
             .buttonStyle(.plain)
             .help(L10n.string("inspector.exif"))
@@ -97,7 +97,7 @@ struct WorkspaceToolbar: View {
             Button {
                 showsTopInfoFieldPicker.toggle()
             } label: {
-                toolbarLabel("rectangle.tophalf.inset.filled", isActive: showsTopInfoFieldPicker || store.showTopInfoBar)
+                toolbarLabel("rectangle.tophalf.inset.filled", isActive: store.showTopInfoBar)
             }
             .buttonStyle(.plain)
             .help(L10n.string("top_info.title"))
@@ -251,25 +251,22 @@ private struct ExifFieldPickerPopover: View {
     var store: WorkspaceStore
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            L10n.text("inspector.exif")
-                .font(.headline)
-
-            Divider()
-
-            VStack(alignment: .leading, spacing: 8) {
-                ForEach(store.exifOverlayFields) { field in
-                    PickerCheckboxRow(
-                        title: L10n.string(field.labelKey),
-                        isSelected: store.isExifOverlayFieldSelected(field)
-                    ) {
-                        store.setExifOverlayField(field, isSelected: !store.isExifOverlayFieldSelected(field))
-                    }
-                }
+        FieldPickerPopover(
+            title: L10n.string("inspector.exif"),
+            fields: store.exifOverlayFields,
+            hasSelection: store.showExifOverlay,
+            canSelectAll: store.canSelectAllExifOverlayFields,
+            onSelectAll: store.selectAllExifOverlayFields,
+            onClear: store.clearExifOverlayFields,
+            label: \.label,
+            isSelected: { store.isExifOverlayFieldSelected($0) },
+            isEnabled: { field in
+                store.isExifOverlayFieldSelected(field) || store.isExifOverlayFieldAvailable(field)
+            },
+            onToggle: { field in
+                store.setExifOverlayField(field, isSelected: !store.isExifOverlayFieldSelected(field))
             }
-        }
-        .padding(14)
-        .frame(width: 220)
+        )
     }
 }
 
@@ -277,31 +274,79 @@ private struct TopInfoFieldPickerPopover: View {
     var store: WorkspaceStore
 
     var body: some View {
+        FieldPickerPopover(
+            title: L10n.string("top_info.title"),
+            fields: store.topInfoOverlayFields,
+            hasSelection: store.showTopInfoBar,
+            canSelectAll: store.canSelectAllTopInfoOverlayFields,
+            onSelectAll: store.selectAllTopInfoOverlayFields,
+            onClear: store.clearTopInfoOverlayFields,
+            label: \.label,
+            isSelected: { store.isTopInfoOverlayFieldSelected($0) },
+            isEnabled: { _ in true },
+            onToggle: { field in
+                store.setTopInfoOverlayField(field, isSelected: !store.isTopInfoOverlayFieldSelected(field))
+            }
+        )
+    }
+}
+
+private struct FieldPickerPopover<Field: Identifiable>: View {
+    let title: String
+    let fields: [Field]
+    let hasSelection: Bool
+    let canSelectAll: Bool
+    let onSelectAll: () -> Void
+    let onClear: () -> Void
+    let label: KeyPath<Field, String>
+    let isSelected: (Field) -> Bool
+    let isEnabled: (Field) -> Bool
+    let onToggle: (Field) -> Void
+
+    var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            L10n.text("top_info.title")
-                .font(.headline)
+            HStack(spacing: 10) {
+                Text(title)
+                    .font(.headline)
+
+                Spacer(minLength: 8)
+
+                Button(L10n.string("picker.all"), action: onSelectAll)
+                    .buttonStyle(.plain)
+                    .font(.caption)
+                    .foregroundStyle(.white)
+                    .disabled(!canSelectAll)
+
+                Button(L10n.string("picker.clear"), action: onClear)
+                    .buttonStyle(.plain)
+                    .font(.caption)
+                    .foregroundStyle(.white)
+                    .disabled(!hasSelection)
+            }
 
             Divider()
 
             VStack(alignment: .leading, spacing: 8) {
-                ForEach(store.topInfoOverlayFields) { field in
+                ForEach(fields) { field in
                     PickerCheckboxRow(
-                        title: field.label,
-                        isSelected: store.isTopInfoOverlayFieldSelected(field)
+                        title: field[keyPath: label],
+                        isSelected: isSelected(field),
+                        isEnabled: isEnabled(field)
                     ) {
-                        store.setTopInfoOverlayField(field, isSelected: !store.isTopInfoOverlayFieldSelected(field))
+                        onToggle(field)
                     }
                 }
             }
         }
         .padding(14)
-        .frame(width: 220)
+        .frame(minWidth: 240, idealWidth: 280)
     }
 }
 
 private struct PickerCheckboxRow: View {
     let title: String
     let isSelected: Bool
+    let isEnabled: Bool
     let action: () -> Void
     @State private var isHovering = false
 
@@ -310,9 +355,10 @@ private struct PickerCheckboxRow: View {
             HStack(spacing: 10) {
                 Image(systemName: isSelected ? "checkmark.square.fill" : "square")
                     .font(.system(size: 18, weight: .semibold))
-                    .foregroundStyle(isSelected ? Color.accentColor : Color.primary.opacity(0.7))
+                    .foregroundStyle(isSelected ? Color.accentColor : Color.primary.opacity(isEnabled ? 0.7 : 0.35))
 
                 Text(title)
+                    .fixedSize(horizontal: false, vertical: true)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
             .padding(.horizontal, 8)
@@ -320,10 +366,16 @@ private struct PickerCheckboxRow: View {
             .contentShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
             .background(
                 RoundedRectangle(cornerRadius: 8, style: .continuous)
-                    .fill(Color.white.opacity(isHovering ? 0.08 : 0))
+                    .fill(Color.primary.opacity(isHovering ? 0.08 : 0))
             )
         }
         .buttonStyle(.plain)
+        .disabled(!isEnabled)
+        .opacity(isEnabled ? 1 : 0.65)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(Text(title))
+        .accessibilityValue(Text(isSelected ? "Selected" : "Not selected"))
+        .accessibilityAddTraits(isSelected ? [.isSelected] : [])
         .onHover { hovering in
             isHovering = hovering
         }

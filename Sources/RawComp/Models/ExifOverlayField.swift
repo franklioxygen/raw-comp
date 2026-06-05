@@ -51,6 +51,10 @@ enum ExifOverlayField: String, CaseIterable, Identifiable, Codable, Sendable {
         }
     }
 
+    var label: String {
+        L10n.string(labelKey)
+    }
+
     static func sortedFieldIDs<S: Sequence>(from fieldIDs: S) -> [String] where S.Element == String {
         let selected = Set(fieldIDs)
         return allCases.map(\.rawValue).filter(selected.contains)

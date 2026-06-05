@@ -572,12 +572,28 @@ final class WorkspaceStore {
         TopInfoOverlayField.allCases
     }
 
+    var canSelectAllTopInfoOverlayFields: Bool {
+        Set(TopInfoOverlayField.allCases.map(\.id)) != selectedTopInfoFieldIDs
+    }
+
     var showExifOverlay: Bool {
         !selectedExifFieldIDs.isEmpty
     }
 
     var exifOverlayFields: [ExifOverlayField] {
         ExifOverlayField.allCases
+    }
+
+    var availableExifOverlayFieldIDs: Set<String> {
+        guard let metadata = activePane?.loadedImage?.metadata else {
+            return Set(ExifOverlayField.allCases.map(\.id))
+        }
+
+        return Set(metadata.exifFields.map(\.id))
+    }
+
+    var canSelectAllExifOverlayFields: Bool {
+        !availableExifOverlayFieldIDs.isSubset(of: selectedExifFieldIDs)
     }
 
     func hasLensMetadata(for pane: ImagePaneState?) -> Bool {
@@ -592,6 +608,14 @@ final class WorkspaceStore {
 
     func isTopInfoOverlayFieldSelected(_ field: TopInfoOverlayField) -> Bool {
         selectedTopInfoFieldIDs.contains(field.id)
+    }
+
+    func selectAllTopInfoOverlayFields() {
+        selectedTopInfoFieldIDs = Set(TopInfoOverlayField.allCases.map(\.id))
+    }
+
+    func clearTopInfoOverlayFields() {
+        selectedTopInfoFieldIDs.removeAll()
     }
 
     func setTopInfoOverlayField(_ field: TopInfoOverlayField, isSelected: Bool) {
@@ -612,6 +636,18 @@ final class WorkspaceStore {
 
     func isExifOverlayFieldSelected(_ field: ExifOverlayField) -> Bool {
         selectedExifFieldIDs.contains(field.id)
+    }
+
+    func isExifOverlayFieldAvailable(_ field: ExifOverlayField) -> Bool {
+        availableExifOverlayFieldIDs.contains(field.id)
+    }
+
+    func selectAllExifOverlayFields() {
+        selectedExifFieldIDs.formUnion(availableExifOverlayFieldIDs)
+    }
+
+    func clearExifOverlayFields() {
+        selectedExifFieldIDs.removeAll()
     }
 
     func setExifOverlayField(_ field: ExifOverlayField, isSelected: Bool) {

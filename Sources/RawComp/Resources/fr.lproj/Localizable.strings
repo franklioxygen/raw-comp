@@ -13,6 +13,8 @@
 "inspector.exif" = "Métadonnées EXIF";
 "top_info.title" = "Barre d'info supérieure";
 "top_info.pane" = "Panneau";
+"picker.all" = "Tout";
+"picker.clear" = "Effacer";
 "inspector.empty" = "Sélectionnez un panneau contenant une image pour afficher les détails du fichier et l'état de la vue.";
 
 "adjustments.title" = "Ajustements de comparaison";
@@ -31,9 +33,10 @@
 "settings.autoupdate" = "Activer la vérification automatique des mises à jour";
 "settings.manual_update" = "Mise à jour manuelle";
 "settings.check_updates" = "Rechercher des mises à jour…";
+"settings.software_version" = "Version du logiciel";
 "settings.footer.available" = "Les changements de thème et de langue s’appliquent immédiatement. Le choix de la langue est utilisé lorsque des ressources localisées sont disponibles.";
 "settings.footer.unavailable" = "Les contrôles de mise à jour sont indisponibles, car Sparkle n’est pas configuré pour cette version.";
-"settings.version" = "Version";
+"settings.version" = "Version %@ (Build %@)";
 "settings.theme.system" = "Thème du système";
 "settings.theme.light" = "Clair";
 "settings.theme.dark" = "Sombre";
@@ -53,10 +56,6 @@
 "toolbar.unlinked" = "Les panneaux se déplacent indépendamment";
 "toolbar.mark_region" = "Marquer la zone synchronisée";
 "toolbar.remove_region" = "Supprimer la zone synchronisée";
-"toolbar.hide_exif" = "Masquer la superposition EXIF";
-"toolbar.show_exif" = "Afficher la superposition EXIF";
-"toolbar.hide_top_bar" = "Masquer la barre d’information supérieure";
-"toolbar.show_top_bar" = "Afficher la barre d’information supérieure";
 "toolbar.zoom_out" = "Zoom arrière";
 "toolbar.zoom_in" = "Zoom avant";
 "toolbar.fit_to_window" = "Ajuster à la fenêtre";
@@ -107,7 +106,6 @@
 "pane.state.loading" = "Chargement";
 "pane.state.ready" = "Prêt";
 "pane.title" = "Panneau %d";
-"pane.drop_or_load" = "Déposez un fichier ou chargez-en un dans ce panneau.";
 "pane.empty_description" = "Chargez une image standard ou un fichier RAW pour commencer la comparaison.";
 "pane.load_image" = "Charger l’image";
 

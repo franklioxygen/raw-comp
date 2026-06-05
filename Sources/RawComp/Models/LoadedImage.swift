@@ -76,8 +76,10 @@ struct ImageMetadata: Sendable {
             return nil
         }
 
+        let fieldLookup = Dictionary(uniqueKeysWithValues: exifFields.map { ($0.id, $0) })
+
         let values = orderedFieldIDs.compactMap { fieldID -> String? in
-            guard let field = exifFields.first(where: { $0.id == fieldID }) else {
+            guard let field = fieldLookup[fieldID] else {
                 return nil
             }
 

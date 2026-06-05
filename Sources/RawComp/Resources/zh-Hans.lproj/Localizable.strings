@@ -13,6 +13,8 @@
 "inspector.exif" = "EXIF 元数据";
 "top_info.title" = "顶部信息栏";
 "top_info.pane" = "面板";
+"picker.all" = "全部";
+"picker.clear" = "清除";
 "inspector.empty" = "选择一个包含图像的面板以查看文件详情和视口状态。";
 
 "adjustments.title" = "比较调整";
@@ -31,9 +33,10 @@
 "settings.autoupdate" = "启用自动检查更新";
 "settings.manual_update" = "手动更新";
 "settings.check_updates" = "检查更新…";
+"settings.software_version" = "软件版本";
 "settings.footer.available" = "主题和语言更改会立即生效。语言选择会在有本地化资源时使用。";
 "settings.footer.unavailable" = "此构建未配置 Sparkle，因此更新控制不可用。";
-"settings.version" = "版本";
+"settings.version" = "版本 %@（构建 %@）";
 "settings.theme.system" = "跟随系统外观";
 "settings.theme.light" = "浅色";
 "settings.theme.dark" = "深色";
@@ -53,10 +56,6 @@
 "toolbar.unlinked" = "画面独立移动";
 "toolbar.mark_region" = "标记同步区域";
 "toolbar.remove_region" = "移除同步区域";
-"toolbar.hide_exif" = "隐藏 EXIF 叠层";
-"toolbar.show_exif" = "显示 EXIF 叠层";
-"toolbar.hide_top_bar" = "隐藏顶部信息栏";
-"toolbar.show_top_bar" = "显示顶部信息栏";
 "toolbar.zoom_out" = "缩小";
 "toolbar.zoom_in" = "放大";
 "toolbar.fit_to_window" = "适合窗口";
@@ -107,7 +106,6 @@
 "pane.state.loading" = "加载中";
 "pane.state.ready" = "就绪";
 "pane.title" = "面板 %d";
-"pane.drop_or_load" = "将文件拖到这里，或在此面板中加载文件。";
 "pane.empty_description" = "加载标准图像或 RAW 文件以开始对比。";
 "pane.load_image" = "加载图像";
 
