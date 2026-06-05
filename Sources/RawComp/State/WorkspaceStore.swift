@@ -44,9 +44,25 @@ final class WorkspaceStore {
         }
     }
     var highlightRect: CGRect?
-    var showTopInfoBar = true
-    var showExifOverlay = false
     var showInspector = true
+    var selectedTopInfoFieldIDs = TopInfoOverlayPreferences.loadSelectedFieldIDs() {
+        didSet {
+            guard selectedTopInfoFieldIDs != oldValue else {
+                return
+            }
+
+            TopInfoOverlayPreferences.saveSelectedFieldIDs(selectedTopInfoFieldIDs)
+        }
+    }
+    var selectedExifFieldIDs = ExifOverlayPreferences.loadSelectedFieldIDs() {
+        didSet {
+            guard selectedExifFieldIDs != oldValue else {
+                return
+            }
+
+            ExifOverlayPreferences.saveSelectedFieldIDs(selectedExifFieldIDs)
+        }
+    }
     var adjustments = ComparisonAdjustments() {
         didSet {
             guard adjustments != oldValue else {
@@ -548,6 +564,22 @@ final class WorkspaceStore {
         layout == .two && (adjustments.compareMode.mode == .deltaE || adjustments.compareMode.mode == .absoluteDifference)
     }
 
+    var showTopInfoBar: Bool {
+        !selectedTopInfoFieldIDs.isEmpty
+    }
+
+    var topInfoOverlayFields: [TopInfoOverlayField] {
+        TopInfoOverlayField.allCases
+    }
+
+    var showExifOverlay: Bool {
+        !selectedExifFieldIDs.isEmpty
+    }
+
+    var exifOverlayFields: [ExifOverlayField] {
+        ExifOverlayField.allCases
+    }
+
     func hasLensMetadata(for pane: ImagePaneState?) -> Bool {
         guard let pane, let metadata = pane.loadedImage?.metadata else {
             return false
@@ -556,6 +588,42 @@ final class WorkspaceStore {
         return metadata.exifFields.contains { field in
             (field.id == "lens_model" || field.id == "focal_length") && !field.value.isEmpty
         }
+    }
+
+    func isTopInfoOverlayFieldSelected(_ field: TopInfoOverlayField) -> Bool {
+        selectedTopInfoFieldIDs.contains(field.id)
+    }
+
+    func setTopInfoOverlayField(_ field: TopInfoOverlayField, isSelected: Bool) {
+        if isSelected {
+            selectedTopInfoFieldIDs.insert(field.id)
+        } else {
+            selectedTopInfoFieldIDs.remove(field.id)
+        }
+    }
+
+    func topInfoLines(for pane: ImagePaneState) -> [String] {
+        guard let metadata = pane.loadedImage?.metadata else {
+            return selectedTopInfoFieldIDs.contains(TopInfoOverlayField.paneTitle.rawValue) ? [pane.title] : []
+        }
+
+        return metadata.topInfoLines(for: selectedTopInfoFieldIDs, paneTitle: pane.title)
+    }
+
+    func isExifOverlayFieldSelected(_ field: ExifOverlayField) -> Bool {
+        selectedExifFieldIDs.contains(field.id)
+    }
+
+    func setExifOverlayField(_ field: ExifOverlayField, isSelected: Bool) {
+        if isSelected {
+            selectedExifFieldIDs.insert(field.id)
+        } else {
+            selectedExifFieldIDs.remove(field.id)
+        }
+    }
+
+    func exifSummary(for metadata: ImageMetadata) -> String? {
+        metadata.exifSummary(for: selectedExifFieldIDs)
     }
 
     func setTemporaryBypassPreview(_ enabled: Bool) {
@@ -623,20 +691,20 @@ final class WorkspaceStore {
     }
 
     func exportComparisonToFile() {
-        let loaded = visiblePanes.compactMap { pane -> ComparisonExportRenderer.Pane? in
-            guard
-                let image = displayCGImage(for: pane) ?? pane.loadedImage?.cgImage
-            else {
-                return nil
+        var loaded: [ComparisonExportRenderer.Pane] = []
+        for pane in visiblePanes {
+            guard let image = displayCGImage(for: pane) ?? pane.loadedImage?.cgImage else {
+                continue
             }
 
-            let subtitle = pane.loadedImage?.metadata.dimensionsText
-            let exifSummary = pane.loadedImage?.metadata.basicExifSummary
-            return ComparisonExportRenderer.Pane(
-                title: pane.title,
-                image: ComparisonExportViewportRenderer.renderVisibleImage(image, viewport: pane.viewport) ?? image,
-                subtitle: subtitle,
-                exifSummary: exifSummary
+            let metadata = pane.loadedImage?.metadata
+            loaded.append(
+                ComparisonExportRenderer.Pane(
+                    title: pane.title,
+                    topInfoLines: topInfoLines(for: pane),
+                    image: ComparisonExportViewportRenderer.renderVisibleImage(image, viewport: pane.viewport) ?? image,
+                    exifSummary: metadata.flatMap { exifSummary(for: $0) }
+                )
             )
         }
 
@@ -652,7 +720,7 @@ final class WorkspaceStore {
                 canvasSize: comparisonCanvasSize,
                 spacing: 0,
                 includeLabels: false,
-                includeTopInfoBar: showTopInfoBar,
+                includeTopInfoBar: showTopInfoBar && loaded.contains(where: { !$0.topInfoLines.isEmpty }),
                 includeBottomInfoBar: showExifOverlay
             )
         else {

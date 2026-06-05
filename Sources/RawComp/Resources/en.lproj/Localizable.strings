@@ -18,6 +18,8 @@
 "inspector.compare_mode" = "Compare Mode";
 "inspector.crop_rect" = "Crop Region";
 "inspector.exif" = "EXIF";
+"top_info.title" = "Top Info Bar";
+"top_info.pane" = "Pane";
 "inspector.empty" = "Select a pane with an image to inspect file details and viewport state.";
 
 "adjustments.title" = "Comparison Adjustments";
@@ -284,6 +286,7 @@
 "exif.camera_model" = "Camera Model";
 "exif.lens" = "Lens";
 "exif.date_original" = "Date Original";
+"exif.camera_mode" = "Camera Mode";
 "exif.exposure" = "Exposure";
 "exif.aperture" = "Aperture";
 "exif.iso" = "ISO";

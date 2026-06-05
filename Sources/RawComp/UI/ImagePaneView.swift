@@ -30,7 +30,7 @@ struct ImagePaneView: View {
                         }
                     )
                     .overlay(alignment: .bottomLeading) {
-                        if store.showExifOverlay, let summary = loadedImage.metadata.basicExifSummary {
+                        if store.showExifOverlay, let summary = store.exifSummary(for: loadedImage.metadata) {
                             exifOverlay(summary)
                         }
                     }
@@ -41,7 +41,7 @@ struct ImagePaneView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color(nsColor: .black))
             .overlay(alignment: .topLeading) {
-                if store.showTopInfoBar {
+                if store.showTopInfoBar, !store.topInfoLines(for: pane).isEmpty {
                     topInfoOverlay
                 }
             }
@@ -62,14 +62,6 @@ struct ImagePaneView: View {
         .onDrop(of: [UTType.fileURL.identifier], isTargeted: nil) { providers in
             store.loadDroppedItemProviders(providers, into: pane.id)
         }
-    }
-
-    private var subtitleText: String {
-        guard let metadata = pane.loadedImage?.metadata else {
-            return L10n.string("pane.drop_or_load")
-        }
-
-        return metadata.dimensionsText
     }
 
     private var emptyState: some View {
@@ -96,15 +88,14 @@ struct ImagePaneView: View {
     }
 
     private var topInfoOverlay: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Text(pane.title)
-                .font(.headline)
-                .foregroundStyle(.white)
-                .lineLimit(1)
-            Text(subtitleText)
-                .font(.caption)
-                .foregroundStyle(Color.white.opacity(0.78))
-                .lineLimit(1)
+        let lines = store.topInfoLines(for: pane)
+        return VStack(alignment: .leading, spacing: 2) {
+            ForEach(Array(lines.enumerated()), id: \.offset) { index, line in
+                Text(line)
+                    .font(index == 0 ? .headline : .caption)
+                    .foregroundStyle(index == 0 ? Color.white : Color.white.opacity(0.78))
+                    .lineLimit(1)
+            }
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 12)
@@ -127,7 +118,8 @@ struct ImagePaneView: View {
         Text(text)
             .font(.caption.monospacedDigit().weight(.semibold))
             .foregroundStyle(.white)
-            .lineLimit(1)
+            .lineLimit(4)
+            .fixedSize(horizontal: false, vertical: true)
             .padding(.horizontal, 10)
             .padding(.vertical, 6)
             .frame(maxWidth: .infinity, alignment: .leading)

@@ -11,6 +11,8 @@
 "inspector.zoom" = "拡大率";
 "inspector.rotation" = "回転";
 "inspector.exif" = "EXIF情報";
+"top_info.title" = "上部情報バー";
+"top_info.pane" = "ペイン";
 "inspector.empty" = "画像のあるペインを選択すると、ファイル詳細とビューポート状態を確認できます。";
 
 "adjustments.title" = "比較調整";
@@ -73,6 +75,7 @@
 "exif.camera_model" = "カメラモデル";
 "exif.lens" = "レンズ";
 "exif.date_original" = "撮影日時";
+"exif.camera_mode" = "カメラモード";
 "exif.exposure" = "露出時間";
 "exif.aperture" = "絞り";
 "exif.iso" = "ISO感度";

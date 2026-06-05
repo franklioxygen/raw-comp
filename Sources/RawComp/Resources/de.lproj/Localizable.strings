@@ -11,6 +11,8 @@
 "inspector.zoom" = "Vergrößerung";
 "inspector.rotation" = "Drehung";
 "inspector.exif" = "EXIF-Metadaten";
+"top_info.title" = "Obere Infoleiste";
+"top_info.pane" = "Feld";
 "inspector.empty" = "Wählen Sie ein Feld mit einem Bild aus, um Dateidetails und den Ansichtsstatus anzuzeigen.";
 
 "adjustments.title" = "Vergleichsanpassungen";
@@ -73,6 +75,7 @@
 "exif.camera_model" = "Kameramodell";
 "exif.lens" = "Objektiv";
 "exif.date_original" = "Aufnahmedatum";
+"exif.camera_mode" = "Kameramodus";
 "exif.exposure" = "Belichtungszeit";
 "exif.aperture" = "Blende";
 "exif.iso" = "ISO-Empfindlichkeit";

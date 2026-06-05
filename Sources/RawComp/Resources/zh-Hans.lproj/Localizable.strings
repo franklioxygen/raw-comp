@@ -11,6 +11,8 @@
 "inspector.zoom" = "缩放";
 "inspector.rotation" = "旋转";
 "inspector.exif" = "EXIF 元数据";
+"top_info.title" = "顶部信息栏";
+"top_info.pane" = "面板";
 "inspector.empty" = "选择一个包含图像的面板以查看文件详情和视口状态。";
 
 "adjustments.title" = "比较调整";
@@ -73,6 +75,7 @@
 "exif.camera_model" = "相机型号";
 "exif.lens" = "镜头";
 "exif.date_original" = "拍摄日期";
+"exif.camera_mode" = "相机模式";
 "exif.exposure" = "曝光时间";
 "exif.aperture" = "光圈";
 "exif.iso" = "感光度";

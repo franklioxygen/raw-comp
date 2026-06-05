@@ -11,6 +11,8 @@
 "inspector.zoom" = "Zoom de inspección";
 "inspector.rotation" = "Rotación";
 "inspector.exif" = "Metadatos EXIF";
+"top_info.title" = "Barra de información superior";
+"top_info.pane" = "Panel";
 "inspector.empty" = "Selecciona un panel con una imagen para inspeccionar los detalles del archivo y el estado de la vista.";
 
 "adjustments.title" = "Ajustes de comparación";
@@ -73,6 +75,7 @@
 "exif.camera_model" = "Modelo de cámara";
 "exif.lens" = "Objetivo";
 "exif.date_original" = "Fecha original";
+"exif.camera_mode" = "Modo de cámara";
 "exif.exposure" = "Exposición";
 "exif.aperture" = "Apertura";
 "exif.iso" = "Sensibilidad ISO";

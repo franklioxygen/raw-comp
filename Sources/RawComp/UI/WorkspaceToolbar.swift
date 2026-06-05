@@ -3,6 +3,8 @@ import SwiftUI
 struct WorkspaceToolbar: View {
     var store: WorkspaceStore
     let onOpenAdvancedSettings: () -> Void
+    @State private var showsExifFieldPicker = false
+    @State private var showsTopInfoFieldPicker = false
 
     var body: some View {
         HStack(spacing: 8) {
@@ -82,20 +84,26 @@ struct WorkspaceToolbar: View {
             .help(store.highlightRect == nil ? L10n.string("toolbar.mark_region") : L10n.string("toolbar.remove_region"))
 
             Button {
-                store.showExifOverlay.toggle()
+                showsExifFieldPicker.toggle()
             } label: {
-                toolbarLabel("info.circle", isActive: store.showExifOverlay)
+                toolbarLabel("info.circle", isActive: showsExifFieldPicker || store.showExifOverlay)
             }
             .buttonStyle(.plain)
-            .help(store.showExifOverlay ? L10n.string("toolbar.hide_exif") : L10n.string("toolbar.show_exif"))
+            .help(L10n.string("inspector.exif"))
+            .popover(isPresented: $showsExifFieldPicker, attachmentAnchor: .rect(.bounds), arrowEdge: .top) {
+                ExifFieldPickerPopover(store: store)
+            }
 
             Button {
-                store.showTopInfoBar.toggle()
+                showsTopInfoFieldPicker.toggle()
             } label: {
-                toolbarLabel("rectangle.tophalf.inset.filled", isActive: store.showTopInfoBar)
+                toolbarLabel("rectangle.tophalf.inset.filled", isActive: showsTopInfoFieldPicker || store.showTopInfoBar)
             }
             .buttonStyle(.plain)
-            .help(store.showTopInfoBar ? L10n.string("toolbar.hide_top_bar") : L10n.string("toolbar.show_top_bar"))
+            .help(L10n.string("top_info.title"))
+            .popover(isPresented: $showsTopInfoFieldPicker, attachmentAnchor: .rect(.bounds), arrowEdge: .top) {
+                TopInfoFieldPickerPopover(store: store)
+            }
         }
     }
 
@@ -236,6 +244,89 @@ struct WorkspaceToolbar: View {
         Rectangle()
             .fill(Color.primary.opacity(0.12))
             .frame(width: 1, height: 18)
+    }
+}
+
+private struct ExifFieldPickerPopover: View {
+    var store: WorkspaceStore
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            L10n.text("inspector.exif")
+                .font(.headline)
+
+            Divider()
+
+            VStack(alignment: .leading, spacing: 8) {
+                ForEach(store.exifOverlayFields) { field in
+                    PickerCheckboxRow(
+                        title: L10n.string(field.labelKey),
+                        isSelected: store.isExifOverlayFieldSelected(field)
+                    ) {
+                        store.setExifOverlayField(field, isSelected: !store.isExifOverlayFieldSelected(field))
+                    }
+                }
+            }
+        }
+        .padding(14)
+        .frame(width: 220)
+    }
+}
+
+private struct TopInfoFieldPickerPopover: View {
+    var store: WorkspaceStore
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            L10n.text("top_info.title")
+                .font(.headline)
+
+            Divider()
+
+            VStack(alignment: .leading, spacing: 8) {
+                ForEach(store.topInfoOverlayFields) { field in
+                    PickerCheckboxRow(
+                        title: field.label,
+                        isSelected: store.isTopInfoOverlayFieldSelected(field)
+                    ) {
+                        store.setTopInfoOverlayField(field, isSelected: !store.isTopInfoOverlayFieldSelected(field))
+                    }
+                }
+            }
+        }
+        .padding(14)
+        .frame(width: 220)
+    }
+}
+
+private struct PickerCheckboxRow: View {
+    let title: String
+    let isSelected: Bool
+    let action: () -> Void
+    @State private var isHovering = false
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 10) {
+                Image(systemName: isSelected ? "checkmark.square.fill" : "square")
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundStyle(isSelected ? Color.accentColor : Color.primary.opacity(0.7))
+
+                Text(title)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .padding(.horizontal, 8)
+            .padding(.vertical, 6)
+            .contentShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+            .background(
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .fill(Color.white.opacity(isHovering ? 0.08 : 0))
+            )
+        }
+        .buttonStyle(.plain)
+        .onHover { hovering in
+            isHovering = hovering
+        }
     }
 }
 

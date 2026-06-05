@@ -35,8 +35,8 @@ import Testing
         panes: [
             ComparisonExportRenderer.Pane(
                 title: "Pane 1",
+                topInfoLines: ["Pane 1", "100x50"],
                 image: image!,
-                subtitle: "100x50",
                 exifSummary: "ISO 100"
             )
         ],
@@ -124,6 +124,7 @@ import Testing
         "exif.camera_make",
         "exif.camera_model",
         "exif.lens",
+        "exif.camera_mode",
         "exif.exposure",
         "exif.aperture",
         "exif.iso",
@@ -137,7 +138,7 @@ import Testing
     }
 }
 
-@Test func basicExifSummaryUsesEnglishISOText() async throws {
+@Test func exifSummaryUsesSelectedFieldsAndEnglishISOText() async throws {
     let metadata = ImageMetadata(
         fileName: "sample.jpg",
         fileType: "jpg",
@@ -149,12 +150,49 @@ import Testing
         usesRawPipeline: false,
         exifFields: [
             ImageMetadataField(id: "iso", labelKey: "exif.iso", value: "400"),
-            ImageMetadataField(id: "f_number", labelKey: "exif.aperture", value: "f/2.8")
+            ImageMetadataField(id: "f_number", labelKey: "exif.aperture", value: "光圈 f/2.8", overlayValue: "f/2.8"),
+            ImageMetadataField(id: "camera_model", labelKey: "exif.camera_model", value: "X-T5")
         ]
     )
 
-    #expect(metadata.basicExifSummary?.contains("ISO 400") == true)
-    #expect(metadata.basicExifSummary?.contains("感光度") == false)
+    let summary = metadata.exifSummary(for: Set(["camera_model", "iso", "f_number"]))
+    #expect(summary?.contains("ISO 400") == true)
+    #expect(summary?.contains("感光度") == false)
+    #expect(summary?.contains("X-T5") == true)
+    #expect(summary?.contains("f/2.8") == true)
+    #expect(summary?.contains("光圈") == false)
+}
+
+@Test func exifMetadataFormatterUsesRequestedDateAndPrefixes() async throws {
+    #expect(
+        ExifMetadataFormatter.formatValue("2026:05:22 18:30:45", id: "date_original") == "2026/05/22 18:30:45"
+    )
+    #expect(ExifMetadataFormatter.formatValue(NSNumber(value: 0), id: "white_balance") == "WB:Auto")
+    #expect(ExifMetadataFormatter.formatValue(NSNumber(value: 1), id: "white_balance") == "WB:Manual")
+    #expect(ExifMetadataFormatter.formatValue(NSNumber(value: 0), id: "flash") == "Flash:Off")
+    #expect(ExifMetadataFormatter.formatValue(NSNumber(value: 1), id: "flash") == "Flash:On")
+    #expect(ExifMetadataFormatter.formatValue(NSNumber(value: 5), id: "metering_mode") == "Metering:Pattern")
+}
+
+@Test func topInfoLinesUseSelectedFieldsAndDefaultPipelineText() async throws {
+    let metadata = ImageMetadata(
+        fileName: "sample.jpg",
+        fileType: "JPEG",
+        pixelWidth: 6000,
+        pixelHeight: 4000,
+        fileSizeBytes: 2_500_000,
+        colorModel: "RGB",
+        profileName: "Display P3",
+        usesRawPipeline: false,
+        exifFields: []
+    )
+
+    let lines = metadata.topInfoLines(
+        for: Set([TopInfoOverlayField.paneTitle.rawValue, TopInfoOverlayField.pipeline.rawValue, TopInfoOverlayField.dimensions.rawValue]),
+        paneTitle: "Pane 2"
+    )
+
+    #expect(lines == ["Pane 2", "6000 x 4000", "Standard"])
 }
 
 @Test func paneOpticsByPathEncodesForSessions() async throws {
@@ -539,6 +577,34 @@ import Testing
     #expect(InspectorPreferences.loadHistogramDisplayMode() == .luma)
 }
 
+@Test func exifOverlayPreferencesRoundTripSelectedFieldsIncludingEmptySelection() async throws {
+    let original = ExifOverlayPreferences.loadSelectedFieldIDs()
+    defer {
+        ExifOverlayPreferences.saveSelectedFieldIDs(original)
+    }
+
+    let saved: Set<String> = [ExifOverlayField.iso.rawValue, ExifOverlayField.cameraMode.rawValue]
+    ExifOverlayPreferences.saveSelectedFieldIDs(saved)
+    #expect(ExifOverlayPreferences.loadSelectedFieldIDs() == saved)
+
+    ExifOverlayPreferences.saveSelectedFieldIDs(Set<String>())
+    #expect(ExifOverlayPreferences.loadSelectedFieldIDs().isEmpty)
+}
+
+@Test func topInfoOverlayPreferencesRoundTripSelectedFieldsIncludingEmptySelection() async throws {
+    let original = TopInfoOverlayPreferences.loadSelectedFieldIDs()
+    defer {
+        TopInfoOverlayPreferences.saveSelectedFieldIDs(original)
+    }
+
+    let saved: Set<String> = [TopInfoOverlayField.fileName.rawValue, TopInfoOverlayField.fileType.rawValue]
+    TopInfoOverlayPreferences.saveSelectedFieldIDs(saved)
+    #expect(TopInfoOverlayPreferences.loadSelectedFieldIDs() == saved)
+
+    TopInfoOverlayPreferences.saveSelectedFieldIDs(Set<String>())
+    #expect(TopInfoOverlayPreferences.loadSelectedFieldIDs().isEmpty)
+}
+
 @Test func recentSessionsStoreRecordsAndRemoves() async throws {
     let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
     try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
@@ -591,7 +657,7 @@ import Testing
         return
     }
 
-    let pane = ComparisonExportRenderer.Pane(title: "A", image: image, subtitle: "100 x 100", exifSummary: "f/2.8")
+    let pane = ComparisonExportRenderer.Pane(title: "A", topInfoLines: ["A", "100 x 100"], image: image, exifSummary: "f/2.8")
     let plain = ComparisonExportRenderer.renderGrid(
         panes: [pane],
         columns: 1,
@@ -649,7 +715,7 @@ import Testing
     }
 
     let exported = ComparisonExportRenderer.renderGrid(
-        panes: [ComparisonExportRenderer.Pane(title: "A", image: markerImage, subtitle: nil, exifSummary: nil)],
+        panes: [ComparisonExportRenderer.Pane(title: "A", topInfoLines: ["A"], image: markerImage, exifSummary: nil)],
         columns: 1,
         includeLabels: false,
         includeTopInfoBar: false,
@@ -712,8 +778,8 @@ private func samplePixel(
 
     let composite = ComparisonExportRenderer.renderGrid(
         panes: [
-            ComparisonExportRenderer.Pane(title: "A", image: image, subtitle: "1 x 1", exifSummary: nil),
-            ComparisonExportRenderer.Pane(title: "B", image: image, subtitle: "1 x 1", exifSummary: nil)
+            ComparisonExportRenderer.Pane(title: "A", topInfoLines: ["A", "1 x 1"], image: image, exifSummary: nil),
+            ComparisonExportRenderer.Pane(title: "B", topInfoLines: ["B", "1 x 1"], image: image, exifSummary: nil)
         ],
         columns: 2
     )

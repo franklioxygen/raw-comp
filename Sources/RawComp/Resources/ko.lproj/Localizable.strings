@@ -11,6 +11,8 @@
 "inspector.zoom" = "확대/축소";
 "inspector.rotation" = "회전";
 "inspector.exif" = "EXIF 정보";
+"top_info.title" = "상단 정보 막대";
+"top_info.pane" = "창";
 "inspector.empty" = "이미지가 있는 창을 선택하면 파일 세부 정보와 뷰포트 상태를 확인할 수 있습니다.";
 
 "adjustments.title" = "비교 조정";
@@ -73,6 +75,7 @@
 "exif.camera_model" = "카메라 모델";
 "exif.lens" = "렌즈";
 "exif.date_original" = "촬영 일시";
+"exif.camera_mode" = "카메라 모드";
 "exif.exposure" = "노출 시간";
 "exif.aperture" = "조리개";
 "exif.iso" = "ISO 감도";
