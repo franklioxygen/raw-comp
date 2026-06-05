@@ -5,8 +5,8 @@ import Foundation
 enum ComparisonExportRenderer {
     struct Pane {
         let title: String
+        let topInfoLines: [String]
         let image: CGImage
-        let subtitle: String?
         let exifSummary: String?
     }
 
@@ -293,8 +293,8 @@ enum ComparisonExportRenderer {
         includeBottomInfoBar: Bool
     ) {
         // NSBitmapImageRep contexts use a bottom-left origin (isFlipped == false).
-        if includeTopInfoBar {
-            let barHeight = min(imageRect.height * 0.18, 72)
+        if includeTopInfoBar, !pane.topInfoLines.isEmpty {
+            let barHeight = topInfoBarHeight(for: pane.topInfoLines, imageHeight: imageRect.height)
             let barRect = NSRect(
                 x: imageRect.minX,
                 y: imageRect.maxY - barHeight,
@@ -302,15 +302,11 @@ enum ComparisonExportRenderer {
                 height: barHeight
             )
             drawGradientBar(in: barRect, strongEdge: .top)
-            drawTopInfoText(
-                title: pane.title,
-                subtitle: pane.subtitle,
-                in: barRect.insetBy(dx: 14, dy: 12)
-            )
+            drawTopInfoText(lines: pane.topInfoLines, in: barRect.insetBy(dx: 14, dy: 12))
         }
 
         if includeBottomInfoBar, let exifSummary = pane.exifSummary {
-            let barHeight = min(imageRect.height * 0.14, 56)
+            let barHeight = bottomInfoBarHeight(for: exifSummary, width: imageRect.width, imageHeight: imageRect.height)
             let barRect = NSRect(
                 x: imageRect.minX,
                 y: imageRect.minY,
@@ -370,23 +366,17 @@ enum ComparisonExportRenderer {
         }
     }
 
-    private static func drawTopInfoText(title: String, subtitle: String?, in textRect: NSRect) {
-        let titleAttributes: [NSAttributedString.Key: Any] = [
-            .font: NSFont.systemFont(ofSize: 13, weight: .semibold),
-            .foregroundColor: NSColor.white
-        ]
-        let titleSize = (title as NSString).size(withAttributes: titleAttributes)
-        var y = textRect.maxY - titleSize.height
-        (title as NSString).draw(at: NSPoint(x: textRect.minX, y: y), withAttributes: titleAttributes)
-
-        if let subtitle {
-            let subtitleAttributes: [NSAttributedString.Key: Any] = [
-                .font: NSFont.systemFont(ofSize: 11),
-                .foregroundColor: NSColor.white.withAlphaComponent(0.78)
+    private static func drawTopInfoText(lines: [String], in textRect: NSRect) {
+        var y = textRect.maxY
+        for (index, line) in lines.enumerated() {
+            let attributes: [NSAttributedString.Key: Any] = [
+                .font: index == 0 ? NSFont.systemFont(ofSize: 13, weight: .semibold) : NSFont.systemFont(ofSize: 11),
+                .foregroundColor: index == 0 ? NSColor.white : NSColor.white.withAlphaComponent(0.78)
             ]
-            let subtitleSize = (subtitle as NSString).size(withAttributes: subtitleAttributes)
-            y -= subtitleSize.height + 2
-            (subtitle as NSString).draw(at: NSPoint(x: textRect.minX, y: y), withAttributes: subtitleAttributes)
+            let size = (line as NSString).size(withAttributes: attributes)
+            y -= size.height
+            (line as NSString).draw(at: NSPoint(x: textRect.minX, y: y), withAttributes: attributes)
+            y -= 2
         }
     }
 
@@ -396,8 +386,42 @@ enum ComparisonExportRenderer {
             .foregroundColor: NSColor.white
         ]
         (text as NSString).draw(
-            at: NSPoint(x: textRect.minX, y: textRect.minY),
-            withAttributes: attributes
+            with: textRect,
+            options: [.usesLineFragmentOrigin, .usesFontLeading],
+            attributes: attributes
         )
+    }
+
+    private static func bottomInfoBarHeight(for text: String, width: CGFloat, imageHeight: CGFloat) -> CGFloat {
+        let contentWidth = max(width - 20, 40)
+        let maxHeight = min(max(imageHeight * 0.3, 42), 120)
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: NSFont.monospacedSystemFont(ofSize: 11, weight: .semibold)
+        ]
+        let textBounds = (text as NSString).boundingRect(
+            with: NSSize(width: contentWidth, height: .greatestFiniteMagnitude),
+            options: [.usesLineFragmentOrigin, .usesFontLeading],
+            attributes: attributes
+        )
+        return min(max(ceil(textBounds.height) + 12, 30), maxHeight)
+    }
+
+    private static func topInfoBarHeight(for lines: [String], imageHeight: CGFloat) -> CGFloat {
+        guard !lines.isEmpty else {
+            return min(imageHeight * 0.18, 72)
+        }
+
+        var totalHeight: CGFloat = 0
+        for (index, line) in lines.enumerated() {
+            let attributes: [NSAttributedString.Key: Any] = [
+                .font: index == 0 ? NSFont.systemFont(ofSize: 13, weight: .semibold) : NSFont.systemFont(ofSize: 11)
+            ]
+            totalHeight += ceil((line as NSString).size(withAttributes: attributes).height)
+            if index < lines.count - 1 {
+                totalHeight += 2
+            }
+        }
+
+        return min(max(totalHeight + 24, 36), 120)
     }
 }

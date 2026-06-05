@@ -3,6 +3,8 @@ import SwiftUI
 struct WorkspaceToolbar: View {
     var store: WorkspaceStore
     let onOpenAdvancedSettings: () -> Void
+    @State private var showsExifFieldPicker = false
+    @State private var showsTopInfoFieldPicker = false
 
     var body: some View {
         HStack(spacing: 8) {
@@ -82,20 +84,26 @@ struct WorkspaceToolbar: View {
             .help(store.highlightRect == nil ? L10n.string("toolbar.mark_region") : L10n.string("toolbar.remove_region"))
 
             Button {
-                store.showExifOverlay.toggle()
+                showsExifFieldPicker.toggle()
             } label: {
                 toolbarLabel("info.circle", isActive: store.showExifOverlay)
             }
             .buttonStyle(.plain)
-            .help(store.showExifOverlay ? L10n.string("toolbar.hide_exif") : L10n.string("toolbar.show_exif"))
+            .help(L10n.string("inspector.exif"))
+            .popover(isPresented: $showsExifFieldPicker, attachmentAnchor: .rect(.bounds), arrowEdge: .top) {
+                ExifFieldPickerPopover(store: store)
+            }
 
             Button {
-                store.showTopInfoBar.toggle()
+                showsTopInfoFieldPicker.toggle()
             } label: {
                 toolbarLabel("rectangle.tophalf.inset.filled", isActive: store.showTopInfoBar)
             }
             .buttonStyle(.plain)
-            .help(store.showTopInfoBar ? L10n.string("toolbar.hide_top_bar") : L10n.string("toolbar.show_top_bar"))
+            .help(L10n.string("top_info.title"))
+            .popover(isPresented: $showsTopInfoFieldPicker, attachmentAnchor: .rect(.bounds), arrowEdge: .top) {
+                TopInfoFieldPickerPopover(store: store)
+            }
         }
     }
 
@@ -236,6 +244,141 @@ struct WorkspaceToolbar: View {
         Rectangle()
             .fill(Color.primary.opacity(0.12))
             .frame(width: 1, height: 18)
+    }
+}
+
+private struct ExifFieldPickerPopover: View {
+    var store: WorkspaceStore
+
+    var body: some View {
+        FieldPickerPopover(
+            title: L10n.string("inspector.exif"),
+            fields: store.exifOverlayFields,
+            hasSelection: store.showExifOverlay,
+            canSelectAll: store.canSelectAllExifOverlayFields,
+            onSelectAll: store.selectAllExifOverlayFields,
+            onClear: store.clearExifOverlayFields,
+            label: \.label,
+            isSelected: { store.isExifOverlayFieldSelected($0) },
+            isEnabled: { field in
+                store.isExifOverlayFieldSelected(field) || store.isExifOverlayFieldAvailable(field)
+            },
+            onToggle: { field in
+                store.setExifOverlayField(field, isSelected: !store.isExifOverlayFieldSelected(field))
+            }
+        )
+    }
+}
+
+private struct TopInfoFieldPickerPopover: View {
+    var store: WorkspaceStore
+
+    var body: some View {
+        FieldPickerPopover(
+            title: L10n.string("top_info.title"),
+            fields: store.topInfoOverlayFields,
+            hasSelection: store.showTopInfoBar,
+            canSelectAll: store.canSelectAllTopInfoOverlayFields,
+            onSelectAll: store.selectAllTopInfoOverlayFields,
+            onClear: store.clearTopInfoOverlayFields,
+            label: \.label,
+            isSelected: { store.isTopInfoOverlayFieldSelected($0) },
+            isEnabled: { _ in true },
+            onToggle: { field in
+                store.setTopInfoOverlayField(field, isSelected: !store.isTopInfoOverlayFieldSelected(field))
+            }
+        )
+    }
+}
+
+private struct FieldPickerPopover<Field: Identifiable>: View {
+    let title: String
+    let fields: [Field]
+    let hasSelection: Bool
+    let canSelectAll: Bool
+    let onSelectAll: () -> Void
+    let onClear: () -> Void
+    let label: KeyPath<Field, String>
+    let isSelected: (Field) -> Bool
+    let isEnabled: (Field) -> Bool
+    let onToggle: (Field) -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 10) {
+                Text(title)
+                    .font(.headline)
+
+                Spacer(minLength: 8)
+
+                Button(L10n.string("picker.all"), action: onSelectAll)
+                    .buttonStyle(.plain)
+                    .font(.caption)
+                    .foregroundStyle(.white)
+                    .disabled(!canSelectAll)
+
+                Button(L10n.string("picker.clear"), action: onClear)
+                    .buttonStyle(.plain)
+                    .font(.caption)
+                    .foregroundStyle(.white)
+                    .disabled(!hasSelection)
+            }
+
+            Divider()
+
+            VStack(alignment: .leading, spacing: 8) {
+                ForEach(fields) { field in
+                    PickerCheckboxRow(
+                        title: field[keyPath: label],
+                        isSelected: isSelected(field),
+                        isEnabled: isEnabled(field)
+                    ) {
+                        onToggle(field)
+                    }
+                }
+            }
+        }
+        .padding(14)
+        .frame(minWidth: 240, idealWidth: 280)
+    }
+}
+
+private struct PickerCheckboxRow: View {
+    let title: String
+    let isSelected: Bool
+    let isEnabled: Bool
+    let action: () -> Void
+    @State private var isHovering = false
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 10) {
+                Image(systemName: isSelected ? "checkmark.square.fill" : "square")
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundStyle(isSelected ? Color.accentColor : Color.primary.opacity(isEnabled ? 0.7 : 0.35))
+
+                Text(title)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .padding(.horizontal, 8)
+            .padding(.vertical, 6)
+            .contentShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+            .background(
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .fill(Color.primary.opacity(isHovering ? 0.08 : 0))
+            )
+        }
+        .buttonStyle(.plain)
+        .disabled(!isEnabled)
+        .opacity(isEnabled ? 1 : 0.65)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(Text(title))
+        .accessibilityValue(Text(isSelected ? "Selected" : "Not selected"))
+        .accessibilityAddTraits(isSelected ? [.isSelected] : [])
+        .onHover { hovering in
+            isHovering = hovering
+        }
     }
 }
 

@@ -81,6 +81,13 @@ private struct AdvancedSettingsView: View {
                     Button(L10n.string("settings.check_updates"), action: settingsController.checkForUpdates)
                         .disabled(!settingsController.canCheckForUpdates)
                 }
+
+                HStack {
+                    L10n.text("settings.software_version")
+                    Spacer()
+                    Text(L10n.string("settings.version", AppVersion.marketingVersion, AppVersion.buildNumber))
+                        .foregroundStyle(.secondary)
+                }
             }
             .formStyle(.grouped)
 
@@ -88,7 +95,6 @@ private struct AdvancedSettingsView: View {
                 Text(settingsController.canManageAutoUpdate
                     ? L10n.string("settings.footer.available")
                     : L10n.string("settings.footer.unavailable"))
-                Text(L10n.string("settings.version", AppVersion.marketingVersion, AppVersion.buildNumber))
             }
             .font(.caption)
             .foregroundStyle(.secondary)

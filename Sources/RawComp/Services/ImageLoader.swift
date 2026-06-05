@@ -2,6 +2,198 @@ import AppKit
 import Foundation
 import ImageIO
 
+enum ExifMetadataFormatter {
+    enum OutputStyle {
+        case localized
+        case english
+    }
+
+    static func formatValue(_ value: Any?, id: String? = nil, style: OutputStyle = .localized) -> String? {
+        switch value {
+        case let value as String:
+            formatString(value, id: id)
+        case let value as NSNumber:
+            formatNumber(value, id: id, style: style)
+        case let values as [Any]:
+            values.compactMap { formatValue($0, id: id, style: style) }.joined(separator: ", ")
+        default:
+            nil
+        }
+    }
+
+    private static func formatString(_ value: String, id: String?) -> String {
+        switch id {
+        case "date_original":
+            formatDateOriginal(value)
+        default:
+            value
+        }
+    }
+
+    private static func formatNumber(_ number: NSNumber, id: String?, style: OutputStyle) -> String {
+        let value = number.doubleValue
+        switch id {
+        case "camera_mode":
+            return formatExposureProgram(number.intValue)
+        case "exposure_time":
+            return formatExposureTime(value, style: style)
+        case "f_number":
+            return formatAperture(value, style: style)
+        case "focal_length":
+            return formatFocalLength(value, style: style)
+        case "exposure_bias":
+            return formatExposureBias(value, style: style)
+        case "metering_mode":
+            return "Metering:\(formatMeteringMode(number.intValue))"
+        case "white_balance":
+            return "WB:\(formatWhiteBalance(number.intValue))"
+        case "flash":
+            return "Flash:\(formatFlash(number.intValue))"
+        case "gps_latitude", "gps_longitude":
+            return formatDegrees(value, style: style)
+        default:
+            break
+        }
+
+        if value.rounded() == value {
+            return String(Int64(value))
+        }
+
+        return formatDecimal(value, maxFractionDigits: 3)
+    }
+
+    private static func formatDateOriginal(_ value: String) -> String {
+        let parts = value.split(separator: " ", maxSplits: 1, omittingEmptySubsequences: false)
+        guard let rawDate = parts.first else {
+            return value
+        }
+
+        let dateParts = rawDate.split(separator: ":")
+        guard dateParts.count == 3 else {
+            return value
+        }
+
+        let formattedDate = dateParts.joined(separator: "/")
+        guard parts.count == 2 else {
+            return formattedDate
+        }
+
+        return formattedDate + " " + parts[1]
+    }
+
+    private static func formatExposureTime(_ seconds: Double, style: OutputStyle) -> String {
+        guard seconds > 0 else {
+            return style == .english ? "0 s" : L10n.string("format.zero_seconds")
+        }
+
+        if seconds < 1 {
+            let denominator = Int((1 / seconds).rounded())
+            return style == .english ? "1/\(denominator) s" : L10n.string("format.fraction_seconds", denominator)
+        }
+
+        let formatted = formatDecimal(seconds, maxFractionDigits: 1)
+        return style == .english ? "\(formatted) s" : L10n.string("format.seconds", formatted)
+    }
+
+    private static func formatAperture(_ value: Double, style: OutputStyle) -> String {
+        let formatted = formatDecimal(value, maxFractionDigits: 1)
+        return style == .english ? "f/\(formatted)" : L10n.string("format.aperture", formatted)
+    }
+
+    private static func formatFocalLength(_ value: Double, style: OutputStyle) -> String {
+        let formatted = formatDecimal(value, maxFractionDigits: 1)
+        return style == .english ? "\(formatted) mm" : L10n.string("format.focal_length", formatted)
+    }
+
+    private static func formatExposureBias(_ value: Double, style: OutputStyle) -> String {
+        let formatted = formatSignedDecimal(value, maxFractionDigits: 2)
+        return style == .english ? "\(formatted) EV" : L10n.string("format.bias_ev", formatted)
+    }
+
+    private static func formatDegrees(_ value: Double, style: OutputStyle) -> String {
+        let formatted = formatDecimal(value, maxFractionDigits: 6)
+        return style == .english ? "\(formatted) deg" : L10n.string("format.deg", formatted)
+    }
+
+    private static func formatDecimal(_ value: Double, maxFractionDigits: Int) -> String {
+        let formatter = NumberFormatter()
+        formatter.minimumFractionDigits = 0
+        formatter.maximumFractionDigits = maxFractionDigits
+        formatter.numberStyle = .decimal
+        return formatter.string(from: NSNumber(value: value)) ?? String(format: "%.\(maxFractionDigits)f", value)
+    }
+
+    private static func formatSignedDecimal(_ value: Double, maxFractionDigits: Int) -> String {
+        let formatted = formatDecimal(abs(value), maxFractionDigits: maxFractionDigits)
+        if value > 0 {
+            return "+\(formatted)"
+        }
+        if value < 0 {
+            return "-\(formatted)"
+        }
+        return formatted
+    }
+
+    private static func formatExposureProgram(_ value: Int) -> String {
+        switch value {
+        case 1:
+            return "Manual"
+        case 2:
+            return "Program"
+        case 3:
+            return "Aperture Priority"
+        case 4:
+            return "Shutter Priority"
+        case 5:
+            return "Creative Program"
+        case 6:
+            return "Action Program"
+        case 7:
+            return "Portrait"
+        case 8:
+            return "Landscape"
+        default:
+            return String(value)
+        }
+    }
+
+    private static func formatMeteringMode(_ value: Int) -> String {
+        switch value {
+        case 1:
+            return "Average"
+        case 2:
+            return "Center Weighted"
+        case 3:
+            return "Spot"
+        case 4:
+            return "Multi-Spot"
+        case 5:
+            return "Pattern"
+        case 6:
+            return "Partial"
+        case 255:
+            return "Other"
+        default:
+            return String(value)
+        }
+    }
+
+    private static func formatWhiteBalance(_ value: Int) -> String {
+        switch value {
+        case 0:
+            return "Auto"
+        case 1:
+            return "Manual"
+        default:
+            return String(value)
+        }
+    }
+
+    private static func formatFlash(_ value: Int) -> String {
+        (value & 0x1) == 0x1 ? "On" : "Off"
+    }
+}
+
 enum ImageLoadError: LocalizedError {
     case unreadable(URL)
     case noDecoder(URL)
@@ -88,6 +280,7 @@ actor ImageLoader {
             ("camera_model", "exif.camera_model", tiff[kCGImagePropertyTIFFModel]),
             ("lens_model", "exif.lens", exif[kCGImagePropertyExifLensModel]),
             ("date_original", "exif.date_original", exif[kCGImagePropertyExifDateTimeOriginal] ?? tiff[kCGImagePropertyTIFFDateTime]),
+            ("camera_mode", "exif.camera_mode", exif[kCGImagePropertyExifExposureProgram]),
             ("exposure_time", "exif.exposure", exif[kCGImagePropertyExifExposureTime]),
             ("f_number", "exif.aperture", exif[kCGImagePropertyExifFNumber]),
             ("iso", "exif.iso", exif[kCGImagePropertyExifISOSpeedRatings]),
@@ -103,80 +296,23 @@ actor ImageLoader {
         ]
 
         return candidates.compactMap { id, labelKey, value in
-            guard let text = formatMetadataValue(value, id: id), !text.isEmpty else {
+            guard
+                let text = formatMetadataValue(value, id: id, style: .localized),
+                !text.isEmpty
+            else {
                 return nil
             }
 
-            return ImageMetadataField(id: id, labelKey: labelKey, value: text)
+            let overlayText = formatMetadataValue(value, id: id, style: .english) ?? text
+            return ImageMetadataField(id: id, labelKey: labelKey, value: text, overlayValue: overlayText)
         }
     }
 
-    private func formatMetadataValue(_ value: Any?, id: String? = nil) -> String? {
-        switch value {
-        case let value as String:
-            value
-        case let value as NSNumber:
-            formatNumber(value, id: id)
-        case let values as [Any]:
-            values.compactMap { formatMetadataValue($0, id: id) }.joined(separator: ", ")
-        default:
-            nil
-        }
-    }
-
-    private func formatNumber(_ number: NSNumber, id: String?) -> String {
-        let value = number.doubleValue
-        switch id {
-        case "exposure_time":
-            return formatExposureTime(value)
-        case "f_number":
-            return L10n.string("format.aperture", formatDecimal(value, maxFractionDigits: 1))
-        case "focal_length":
-            return L10n.string("format.focal_length", formatDecimal(value, maxFractionDigits: 1))
-        case "exposure_bias":
-            return L10n.string("format.bias_ev", formatSignedDecimal(value, maxFractionDigits: 2))
-        case "gps_latitude", "gps_longitude":
-            return L10n.string("format.deg", formatDecimal(value, maxFractionDigits: 6))
-        default:
-            break
-        }
-
-        if value.rounded() == value {
-            return String(Int64(value))
-        }
-
-        return formatDecimal(value, maxFractionDigits: 3)
-    }
-
-    private func formatExposureTime(_ seconds: Double) -> String {
-        guard seconds > 0 else {
-            return L10n.string("format.zero_seconds")
-        }
-
-        if seconds < 1 {
-            let denominator = Int((1 / seconds).rounded())
-            return L10n.string("format.fraction_seconds", denominator)
-        }
-
-        return L10n.string("format.seconds", formatDecimal(seconds, maxFractionDigits: 1))
-    }
-
-    private func formatDecimal(_ value: Double, maxFractionDigits: Int) -> String {
-        let formatter = NumberFormatter()
-        formatter.minimumFractionDigits = 0
-        formatter.maximumFractionDigits = maxFractionDigits
-        formatter.numberStyle = .decimal
-        return formatter.string(from: NSNumber(value: value)) ?? String(format: "%.\(maxFractionDigits)f", value)
-    }
-
-    private func formatSignedDecimal(_ value: Double, maxFractionDigits: Int) -> String {
-        let formatted = formatDecimal(abs(value), maxFractionDigits: maxFractionDigits)
-        if value > 0 {
-            return "+\(formatted)"
-        }
-        if value < 0 {
-            return "-\(formatted)"
-        }
-        return formatted
+    private func formatMetadataValue(
+        _ value: Any?,
+        id: String? = nil,
+        style: ExifMetadataFormatter.OutputStyle = .localized
+    ) -> String? {
+        ExifMetadataFormatter.formatValue(value, id: id, style: style)
     }
 }

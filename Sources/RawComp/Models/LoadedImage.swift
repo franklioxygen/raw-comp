@@ -6,6 +6,14 @@ struct ImageMetadataField: Identifiable, Sendable {
     let id: String
     let labelKey: String
     let value: String
+    let overlayValue: String
+
+    init(id: String, labelKey: String, value: String, overlayValue: String? = nil) {
+        self.id = id
+        self.labelKey = labelKey
+        self.value = value
+        self.overlayValue = overlayValue ?? value
+    }
 }
 
 struct ImageMetadata: Sendable {
@@ -31,15 +39,56 @@ struct ImageMetadata: Sendable {
         return ByteCountFormatter.string(fromByteCount: fileSizeBytes, countStyle: .file)
     }
 
-    var basicExifSummary: String? {
-        let lookup = Dictionary(uniqueKeysWithValues: exifFields.map { ($0.id, $0.value) })
-        let values = [
-            lookup["f_number"],
-            lookup["iso"].map { "ISO \($0)" },
-            lookup["exposure_time"],
-            lookup["focal_length"],
-            lookup["exposure_bias"]
-        ].compactMap { $0 }
+    var pipelineText: String {
+        usesRawPipeline
+            ? L10n.string("inspector.pipeline.raw_preview")
+            : L10n.string("inspector.pipeline.standard")
+    }
+
+    func topInfoLines(for selectedFieldIDs: Set<String>, paneTitle: String) -> [String] {
+        TopInfoOverlayField.sortedFieldIDs(from: selectedFieldIDs).compactMap { fieldID in
+            switch TopInfoOverlayField(rawValue: fieldID) {
+            case .paneTitle:
+                paneTitle
+            case .fileName:
+                fileName
+            case .dimensions:
+                dimensionsText
+            case .fileType:
+                fileType
+            case .fileSize:
+                fileSizeText
+            case .colorModel:
+                colorModel
+            case .profileName:
+                profileName
+            case .pipeline:
+                pipelineText
+            case .none:
+                nil
+            }
+        }
+    }
+
+    func exifSummary(for selectedFieldIDs: Set<String>) -> String? {
+        let orderedFieldIDs = ExifOverlayField.sortedFieldIDs(from: selectedFieldIDs)
+        guard !orderedFieldIDs.isEmpty else {
+            return nil
+        }
+
+        let fieldLookup = Dictionary(uniqueKeysWithValues: exifFields.map { ($0.id, $0) })
+
+        let values = orderedFieldIDs.compactMap { fieldID -> String? in
+            guard let field = fieldLookup[fieldID] else {
+                return nil
+            }
+
+            if fieldID == ExifOverlayField.iso.rawValue {
+                return "ISO \(field.overlayValue)"
+            }
+
+            return field.overlayValue
+        }
 
         guard !values.isEmpty else {
             return nil

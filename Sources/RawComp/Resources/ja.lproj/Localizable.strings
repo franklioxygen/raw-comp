@@ -11,6 +11,10 @@
 "inspector.zoom" = "拡大率";
 "inspector.rotation" = "回転";
 "inspector.exif" = "EXIF情報";
+"top_info.title" = "上部情報バー";
+"top_info.pane" = "ペイン";
+"picker.all" = "すべて";
+"picker.clear" = "クリア";
 "inspector.empty" = "画像のあるペインを選択すると、ファイル詳細とビューポート状態を確認できます。";
 
 "adjustments.title" = "比較調整";
@@ -29,9 +33,10 @@
 "settings.autoupdate" = "自動更新チェックを有効にする";
 "settings.manual_update" = "手動更新";
 "settings.check_updates" = "アップデートを確認…";
+"settings.software_version" = "ソフトウェアバージョン";
 "settings.footer.available" = "テーマと言語の変更はすぐに反映されます。ローカライズ済みリソースがある場合は、その言語設定が使用されます。";
 "settings.footer.unavailable" = "このビルドでは Sparkle が設定されていないため、更新操作は利用できません。";
-"settings.version" = "バージョン";
+"settings.version" = "バージョン %@ (Build %@)";
 "settings.theme.system" = "システムテーマ";
 "settings.theme.light" = "ライト";
 "settings.theme.dark" = "ダーク";
@@ -51,10 +56,6 @@
 "toolbar.unlinked" = "ペインは個別に移動します";
 "toolbar.mark_region" = "同期領域をマーク";
 "toolbar.remove_region" = "同期領域を削除";
-"toolbar.hide_exif" = "EXIF オーバーレイを隠す";
-"toolbar.show_exif" = "EXIF オーバーレイを表示";
-"toolbar.hide_top_bar" = "上部情報バーを隠す";
-"toolbar.show_top_bar" = "上部情報バーを表示";
 "toolbar.zoom_out" = "ズームアウト";
 "toolbar.zoom_in" = "ズームイン";
 "toolbar.fit_to_window" = "ウインドウに合わせる";
@@ -73,6 +74,7 @@
 "exif.camera_model" = "カメラモデル";
 "exif.lens" = "レンズ";
 "exif.date_original" = "撮影日時";
+"exif.camera_mode" = "カメラモード";
 "exif.exposure" = "露出時間";
 "exif.aperture" = "絞り";
 "exif.iso" = "ISO感度";
@@ -104,7 +106,6 @@
 "pane.state.loading" = "読み込み中";
 "pane.state.ready" = "準備完了";
 "pane.title" = "ペイン %d";
-"pane.drop_or_load" = "ファイルをドロップするか、このペインに読み込んでください。";
 "pane.empty_description" = "標準画像または RAW ファイルを読み込んで比較を開始します。";
 "pane.load_image" = "画像を読み込む";
 
